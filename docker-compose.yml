@@ -3,16 +3,21 @@ version: '3.8'
 services:
   api:
     build: ./api
+    volumes:
+      - ./api/app:/code/app
     command: uvicorn app.main:app --host 0.0.0.0 --port 80
     ports:
       - "8080:80"
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     networks:
         - shared-network
 
   worker:
     build: ./worker
+    volumes:
+      - ./worker/app:/code/app
     command: python3 app/main.py
     depends_on:
       - api
@@ -28,6 +33,9 @@ services:
       - "5672:5672"
     networks:
       - shared-network
+    healthcheck:
+      test: "exit 0"
+
 
 
 networks:
