@@ -36,8 +36,24 @@ services:
     healthcheck:
       test: "exit 0"
 
-
+  cassandra:
+    image: cassandra:latest
+    container_name: cassandra
+    ports:
+      - "9042:9042"
+    networks:
+      - shared-network
+    environment:
+      - CASSANDRA_CLUSTER_NAME=mycluster
+      - CASSANDRA_DC=mydc
+      - CASSANDRA_RACK=myrack
+    volumes:
+      - cassandra-data:/var/lib/cassandra
+    healthcheck:
+      test: ["CMD-SHELL", "cqlsh -e 'describe keyspaces'"]
 
 networks:
     shared-network:
 
+volumes:
+  cassandra-data:
