@@ -2,29 +2,9 @@ from uuid import uuid4
 
 import pika
 
+from worker.app.PseudoRepoCassandra import get_cassandra_session
+from worker.app.logger import get_logger
 
-import logging
-
-from cassandra.cluster import Cluster
-
-
-def get_logger():
-    logger = logging.getLogger('MyLogger')
-    logger.setLevel(logging.INFO)  # Set the logging level
-    stream_handler = logging.StreamHandler()
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    stream_handler.setFormatter(formatter)
-    logger.addHandler(stream_handler)
-    return logger
-
-
-def get_cassandra_session():
-    cluster = Cluster(['cassandra'])
-    session = cluster.connect()
-    session.execute(
-        "CREATE KEYSPACE IF NOT EXISTS example WITH replication = {'class': 'SimpleStrategy', 'replication_factor' : 1};")
-    session.execute("USE example;")
-    return session
 
 def main(logger=get_logger()):
     connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq', heartbeat=0))
