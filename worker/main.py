@@ -7,7 +7,8 @@ from app.PseudoRepoCassandra import get_cassandra_session
 from app.logger import get_logger
 from app.config import data_path
 from app.run_alg import run_alg
-temp_file_path = os.path.join(data_path, "temp_file.txt")
+from app.data import get_path
+
 
 def main(logger=get_logger()):
     connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq', heartbeat=0))
@@ -20,7 +21,9 @@ def main(logger=get_logger()):
         unique_id = properties.headers['unique_id']
         msg = f"{unique_id}: {body}"
         logger.info(msg)
-        run_alg(temp_file_path, temp_file_path + f"{unique_id}.txt")
+        input = get_path(f"{unique_id}.tsv")
+        output = get_path(f"{unique_id}_out.tsv")
+        run_alg(input, output)
         # read properties headers
         cassandra_session.execute("INSERT INTO hello_world (id, message) VALUES (%s, %s);", (uuid4(), msg))
 
@@ -31,5 +34,4 @@ def main(logger=get_logger()):
 
 if __name__ == '__main__':
     get_logger().info(os.listdir())
-    os.system("touch " + temp_file_path)
     main()
