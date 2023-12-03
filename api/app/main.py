@@ -1,13 +1,15 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File
 import pika
-import json
+
+from .logger import get_logger
 
 app = FastAPI()
 
 
 @app.on_event("startup")
 async def startup_event():
-    global connection, channel
+    global connection, channel, logger
+    logger = get_logger()
     connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq', heartbeat=0))
     channel = connection.channel()
     channel.queue_declare(queue='hello')
@@ -24,3 +26,12 @@ async def read_root():
                           routing_key='hello',
                           body='Hello World!')
     return {"message": "Job enqueued"}
+
+
+@app.post("/uploadfile")
+async def create_upload_file(file: UploadFile = File(...)):
+    logger.info("Upload file method called, recived file with name: ", file.filename)
+    # TODO save with Shared-volumeRepo
+
+    # TODO send message
+    return {"filename": file.filename}
