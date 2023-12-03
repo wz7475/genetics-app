@@ -5,7 +5,7 @@ services:
     build: ./api
     volumes:
       - ./api/app:/code/app
-      - shared-volume:/code/app/data
+      - shared-volume:/code/data
     command: uvicorn app.main:app --host 0.0.0.0 --port 80
     ports:
       - "8080:80"

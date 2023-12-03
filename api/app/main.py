@@ -4,6 +4,7 @@ from fastapi import FastAPI, UploadFile, File
 import pika
 
 from .logger import get_logger
+from .config import data_path
 
 app = FastAPI()
 
@@ -36,6 +37,7 @@ async def read_root():
 async def create_upload_file(file: UploadFile = File(...)):
     logger.info("Upload file method called, recived file with name: ", file.filename)
     # TODO save with Shared-volumeRepo
-
+    with open(f"{data_path}/{file.filename}", "wb") as buffer:
+        buffer.write(await file.read())
     # TODO send message
     return {"filename": file.filename}
