@@ -54,8 +54,24 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "cqlsh -e 'describe keyspaces'"]
 
+  minio1dc:
+    image: quay.io/minio/minio
+    container_name: minio1dc
+    ports:
+      - "9000:9000"
+      - "9090:9090"
+    environment:
+      MINIO_ROOT_USER: ROOTUSER
+      MINIO_ROOT_PASSWORD: CHANGEME123
+    networks:
+      - shared-network
+    volumes:
+      - minio-data:/data
+    command: server /data --console-address ":9090"
+
 networks:
     shared-network:
 
 volumes:
   cassandra-data:
+  minio-data:
