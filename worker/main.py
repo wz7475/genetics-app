@@ -1,10 +1,13 @@
+import os
 from uuid import uuid4
 
 import pika
 
-from worker.app.PseudoRepoCassandra import get_cassandra_session
-from worker.app.logger import get_logger
-
+from app .PseudoRepoCassandra import get_cassandra_session
+from .logger import get_logger
+from .config import data_path
+from .run_alg import run_alg
+temp_file_path = os.path.join(data_path, "temp_file.txt")
 
 def main(logger=get_logger()):
     connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq', heartbeat=0))
@@ -14,17 +17,16 @@ def main(logger=get_logger()):
     cassandra_session = get_cassandra_session()
 
     def callback(ch, method, properties, body):
-        msg = f" [x] Received {body}"
+        msg = f"Received {body}"
         logger.info(msg)
+        run_alg(temp_file_path, temp_file_path + f"{uuid4()}.txt")
         cassandra_session.execute("INSERT INTO hello_world (id, message) VALUES (%s, %s);", (uuid4(), msg))
-        print(f" [x] Received {body}")
 
     channel.basic_consume(queue='hello', on_message_callback=callback, auto_ack=True)
 
-    print(' [*] Waiting for messages. To exit press CTRL+C')
     channel.start_consuming()
 
 
 if __name__ == '__main__':
-    print("started")
+    os.system("touch " + temp_file_path)
     main()
