@@ -57,6 +57,17 @@ services:
       - cassandra-data:/var/lib/cassandra
     healthcheck:
       test: ["CMD-SHELL", "cqlsh -e 'describe keyspaces'"]
+  pangolin:
+    build: ./pangolin
+    volumes:
+      - shared-volume:/code/data
+    depends_on:
+      - api
+      - rabbitmq
+      - cassandra
+    networks:
+      - shared-network
+
 
 networks:
     shared-network:
