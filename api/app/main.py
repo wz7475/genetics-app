@@ -5,16 +5,14 @@ import pika
 
 from .logger import get_logger
 from .config import data_path
-from .data.SharedVolumeRepo import SharedVolumeRepo
 
 app = FastAPI()
 
 
 @app.on_event("startup")
 async def startup_event():
-    global connection, channel, logger, repo
+    global connection, channel, logger
     logger = get_logger()
-    repo = SharedVolumeRepo()
     connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq', heartbeat=0))
     channel = connection.channel()
     channel.queue_declare(queue='hello')
@@ -38,6 +36,8 @@ async def read_root():
 @app.post("/uploadfile")
 async def create_upload_file(file: UploadFile = File(...)):
     logger.info("Upload file method called, recived file with name: ", file.filename)
-    await repo.save_file(file, file.filename)
+    # TODO save with Shared-volumeRepo
+    with open(f"{data_path}/{file.filename}", "wb") as buffer:
+        buffer.write(await file.read())
     # TODO send message
     return {"filename": file.filename}
