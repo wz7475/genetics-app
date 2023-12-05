@@ -1,5 +1,3 @@
-from uuid import uuid4
-
 from fastapi import FastAPI, UploadFile, File
 import pika
 
@@ -24,9 +22,7 @@ def shutdown_event():
 
 @app.get("/")
 async def read_root():
-    properties = pika.BasicProperties(headers={'unique_id': f"{uuid4()}"})
     channel.basic_publish(exchange='',
-                          properties=properties,
                           routing_key='hello',
                           body='Hello World!')
     return {"message": "Job enqueued"}
