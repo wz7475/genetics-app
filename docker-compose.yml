@@ -15,12 +15,11 @@ services:
     networks:
         - shared-network
 
-  worker:
-    build: ./worker
+  pangolin:
+    build: ./pangolin
     volumes:
-      - ./worker/app:/code/app
-      - ./worker/main.py:/code/main.py
-      - ./worker/ext_alg_mock:/code/ext_alg_mock
+      - ./pangolin/app:/code/app
+      - ./pangolin/main.py:/code/main.py
       - shared-volume:/code/data
     command: python3 main.py
     depends_on:
@@ -57,16 +56,7 @@ services:
       - cassandra-data:/var/lib/cassandra
     healthcheck:
       test: ["CMD-SHELL", "cqlsh -e 'describe keyspaces'"]
-  pangolin:
-    build: ./pangolin
-    volumes:
-      - shared-volume:/code/data
-    depends_on:
-      - api
-      - rabbitmq
-      - cassandra
-    networks:
-      - shared-network
+
 
 
 networks:

@@ -38,7 +38,7 @@ async def read_root():
 @app.post("/uploadfile")
 async def create_upload_file(file: UploadFile = File(...)):
     unique_id = get_uuid4()
-    await repo.save_file(file, f"{unique_id}.tsv")
+    await repo.save_file(file, f"{unique_id}.csv")
     properties = pika.BasicProperties(headers={'unique_id': unique_id})
     channel.basic_publish(exchange='',
                           properties=properties,
