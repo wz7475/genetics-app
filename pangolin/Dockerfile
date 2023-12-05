@@ -23,7 +23,6 @@ RUN git clone https://github.com/tkzeng/Pangolin.git
 # Install Pangolin
 RUN cd Pangolin && pip install . && cd ..
 
-COPY keep_alive.py /code/keep_alive.py
+COPY ./requirements.txt /code/requirements.txt
 
-# Run the keep_alive script
-CMD ["python", "keep_alive.py"]
+RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
