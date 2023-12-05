@@ -4,7 +4,7 @@ from fastapi import FastAPI, UploadFile, File
 import pika
 
 from .logger import get_logger
-from .id_genertor import get_uuid4
+from .config import data_path
 from .data.SharedVolumeRepo import SharedVolumeRepo
 
 app = FastAPI()
@@ -37,11 +37,7 @@ async def read_root():
 
 @app.post("/uploadfile")
 async def create_upload_file(file: UploadFile = File(...)):
-    unique_id = get_uuid4()
-    await repo.save_file(file, f"{unique_id}.tsv")
-    properties = pika.BasicProperties(headers={'unique_id': unique_id})
-    channel.basic_publish(exchange='',
-                          properties=properties,
-                          routing_key='hello',
-                          body=bytes(unique_id, encoding='utf-8'))
-    return {"message": "Job enqueued"}
+    logger.info("Upload file method called, recived file with name: ", file.filename)
+    await repo.save_file(file, file.filename)
+    # TODO send message
+    return {"filename": file.filename}
