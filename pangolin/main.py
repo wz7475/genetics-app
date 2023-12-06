@@ -3,11 +3,11 @@ from uuid import uuid4
 
 import pika
 
-from app.PseudoRepoCassandra import get_cassandra_session
 from app.logger import get_logger
 from app.config import data_path
 from app.run_alg import run_alg
 from app.data import get_path
+from app.redis_conn import Redis_handle
 
 
 def main(logger=get_logger()):
@@ -15,7 +15,7 @@ def main(logger=get_logger()):
     channel = connection.channel()
     channel.queue_declare(queue='hello')
 
-    cassandra_session = get_cassandra_session()
+    redis = Redis_handle()
 
     def callback(ch, method, properties, body):
         unique_id = properties.headers['unique_id']
@@ -23,9 +23,10 @@ def main(logger=get_logger()):
         logger.info(msg)
         input = get_path(f"{unique_id}.csv")
         output = get_path(f"{unique_id}_out")
+        # later use run_alg and use quee to inform about finishing the process
         run_alg(input, output)
         # read properties headers
-        cassandra_session.execute("INSERT INTO hello_world (id, message) VALUES (%s, %s);", (uuid4(), msg))
+        redis.input_data("lastId", f"{unique_id}")
 
     channel.basic_consume(queue='hello', on_message_callback=callback, auto_ack=True)
 

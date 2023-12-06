@@ -25,7 +25,6 @@ services:
     depends_on:
       - api
       - rabbitmq
-      - cassandra
     networks:
       - shared-network
 
@@ -40,28 +39,21 @@ services:
     healthcheck:
       test: "exit 0"
 
-  cassandra:
-    image: cassandra:latest
-    hostname: cassandra
-    container_name: cassandra
+
+  redis:
+    image: redis:latest
+    container_name: redisalg
     ports:
-      - "9042:9042"
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
     networks:
       - shared-network
-    environment:
-      - CASSANDRA_CLUSTER_NAME=mycluster
-      - CASSANDRA_DC=mydc
-      - CASSANDRA_RACK=myrack
-    volumes:
-      - cassandra-data:/var/lib/cassandra
-    healthcheck:
-      test: ["CMD-SHELL", "cqlsh -e 'describe keyspaces'"]
-
 
 
 networks:
     shared-network:
 
 volumes:
-  cassandra-data:
+  redis-data:
   shared-volume:
