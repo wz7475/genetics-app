@@ -50,6 +50,13 @@ services:
     networks:
       - shared-network
 
+  redis-test:
+    build: ./redis_test
+    volumes:
+      - ./redis_test:/code
+    command: python3 /code/app/benchmark.py
+    networks:
+      - shared-network
 
 networks:
     shared-network:
