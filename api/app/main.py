@@ -6,6 +6,7 @@ import pika
 from .logger import get_logger
 from .id_genertor import get_uuid4
 from .data.SharedVolumeRepo import SharedVolumeRepo
+from shared_utils import Bar
 
 app = FastAPI()
 
@@ -45,3 +46,7 @@ async def create_upload_file(file: UploadFile = File(...)):
                           routing_key='hello',
                           body=bytes(unique_id, encoding='utf-8'))
     return {"message": "Job enqueued"}
+
+@app.get("/getbar")
+async def get_bar():
+    return {"message":  f"{Bar().bar()}"}
