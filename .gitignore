@@ -2,3 +2,4 @@
 .vscode
 __pycache__
 cqlsh-astra
+spip/ref_files
