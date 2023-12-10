@@ -53,8 +53,8 @@ services:
   redis-test:
     build: ./redis_test
     volumes:
-      - ./redis_test:/code
-    command: python3 /code/app/benchmark.py
+      - ./redis_test/app:/code
+    command: python3 /code/benchmark.py
     networks:
       - shared-network
 
