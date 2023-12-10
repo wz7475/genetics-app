@@ -16,5 +16,5 @@ def make_long_file(input_path, output_path, desired_lines):
 
 if __name__ == '__main__':
     input_path = "brca.csv"
-    output_path = "brca_4k.csv"
-    make_long_file(input_path, output_path, 4000)
+    output_path = "brca_300.csv"
+    make_long_file(input_path, output_path, 300)
