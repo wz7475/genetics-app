@@ -32,6 +32,7 @@ services:
     build: ./spip
     volumes:
       - shared-volume:/code/data
+      - ./spip/perf_tests:/usr/src/app/SPiP/perf_tests
     command: tail -f /dev/null
     depends_on:
       - api
