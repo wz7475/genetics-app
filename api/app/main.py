@@ -33,12 +33,15 @@ def shutdown_event():
 @app.get("/")
 async def read_root():
     properties = pika.BasicProperties(headers={'unique_id': f"{uuid4()}"})
-    # channel.basic_publish(exchange='',
-    #                       properties=properties,
-    #                       routing_key='hello',
-    #                       body='Hello World!')
+    channel.basic_publish(exchange='',
+                          properties=properties,
+                          routing_key='hello',
+                          body='Hello World!')
     return {"message": "Job enqueued"}
 
+@app.get("/test")
+async def read_root():
+    return {"message": "Job enqueued"}
 
 @app.post("/uploadfile")
 async def create_upload_file(file: UploadFile = File(...)):
