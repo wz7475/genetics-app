@@ -7,7 +7,7 @@ from app.logger import get_logger
 from app.config import data_path
 from app.run_alg import run_alg
 from app.data import get_path
-from app.redis_conn import Redis_handle
+from shared_utils.RedisHandle import RedisHandle
 
 
 def main(logger=get_logger()):
@@ -15,7 +15,7 @@ def main(logger=get_logger()):
     channel = connection.channel()
     channel.queue_declare(queue='hello')
 
-    redis = Redis_handle()
+    redis = RedisHandle()
 
     def callback(ch, method, properties, body):
         unique_id = properties.headers['unique_id']
@@ -26,7 +26,7 @@ def main(logger=get_logger()):
         # later use run_alg and use quee to inform about finishing the process
         run_alg(input, output)
         # read properties headers
-        redis.input_data("lastId", f"{unique_id}")
+        redis.input_file(f"{output}.csv")
 
     channel.basic_consume(queue='hello', on_message_callback=callback, auto_ack=True)
 

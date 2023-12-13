@@ -5,12 +5,11 @@ from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import FileResponse
 import pika
 
-from .logger import get_logger
+from shared_utils.logger import get_logger
 from .id_genertor import get_uuid4
 from .data.SharedVolumeRepo import SharedVolumeRepo
-from pathlib import Path
 from .utils import count_file_lines
-from .redis_conn import Redis_handle
+from shared_utils.RedisHandle import RedisHandle
 
 app = FastAPI()
 
@@ -63,9 +62,16 @@ async def get_result(task_id: str) -> File:
     return {"message": f"task {task_id} does not exist"}
 
 
+# @app.get("/redisRecord")
+# async def read_root(key):
+#     con = RedisHandle()
+#     con.get_data(key)
+#     return {"value": f"{con.get_data(key)}"}
+
+
 @app.get("/redisRecord")
-async def read_root(key):
-    con = Redis_handle()
-    con.get_data(key)
+async def read_root(gene: str, chrom: int, pos: int, ref: str, alt: str):
+    key = str(gene) + str(chrom) + str(pos) + str(ref) + str(alt)
+    con = RedisHandle()
     return {"value": f"{con.get_data(key)}"}
 

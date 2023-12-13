@@ -6,6 +6,7 @@ services:
     volumes:
       - ./api/app:/code/app
       - shared-volume:/code/data
+      - ./shared_utils:/code/shared_utils
     command: uvicorn app.main:app --host 0.0.0.0 --port 80
     ports:
       - "8080:80"
@@ -21,6 +22,7 @@ services:
       - ./pangolin/app:/code/app
       - ./pangolin/main.py:/code/main.py
       - shared-volume:/code/data
+      - ./shared_utils:/code/shared_utils
     command: python3 main.py
     depends_on:
       - api
