@@ -6,11 +6,9 @@ from fastapi.responses import FileResponse
 import pika
 
 from shared_utils.logger import get_logger
-from .id_genertor import get_uuid4
 from .data.SharedVolumeRepo import SharedVolumeRepo
-from .utils import count_file_lines
+from .utils import count_file_lines, get_uuid4
 from shared_utils.RedisHandle import RedisHandle
-
 app = FastAPI()
 
 
@@ -29,14 +27,6 @@ def shutdown_event():
     connection.close()
 
 
-@app.get("/")
-async def read_root():
-    properties = pika.BasicProperties(headers={'unique_id': f"{uuid4()}"})
-    channel.basic_publish(exchange='',
-                          properties=properties,
-                          routing_key='hello',
-                          body='Hello World!')
-    return {"message": "Job enqueued"}
 
 @app.get("/test")
 async def read_root():
@@ -46,10 +36,8 @@ async def read_root():
 async def create_upload_file(file: UploadFile = File(...)):
     unique_id = get_uuid4()
     await repo.save_file(file, f"{unique_id}.csv")
-    properties = pika.BasicProperties(headers={'unique_id': unique_id})
     channel.basic_publish(exchange='',
-                          properties=properties,
-                          routing_key='hello',
+                          routing_key='orchestrator',
                           body=bytes(unique_id, encoding='utf-8'))
     return {"message": f"Job enqueued, task id: {unique_id}"}
 
@@ -64,12 +52,6 @@ async def get_result(task_id: str) -> File:
         return {"message": f"task: {task_id} is in progress"}
     return {"message": f"task {task_id} does not exist"}
 
-
-# @app.get("/redisRecord")
-# async def read_root(key):
-#     con = RedisHandle()
-#     con.get_data(key)
-#     return {"value": f"{con.get_data(key)}"}
 
 
 @app.get("/redisRecord")

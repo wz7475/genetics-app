@@ -16,6 +16,22 @@ services:
     networks:
         - shared-network
 
+  orchestrator:
+    build: taskflowapi/orchestrator
+    container_name: orchestrator
+    volumes:
+      - ./taskflowapi/orchestrator/app:/code/app
+      - shared-volume:/code/data
+      - ./taskflowapi/shared_utils:/code/shared_utils
+    working_dir: /code/app
+    command: bash -c "python3 main.py"
+    depends_on:
+      - api
+      - rabbitmq
+      - redis
+    networks:
+      - shared-network
+
   pangolin:
     build: algorithmworkers/pangolin
     volumes:
