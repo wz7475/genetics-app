@@ -15,7 +15,9 @@ def main(logger=get_logger()):
         msg = f"received: {body}"
         logger.info(msg)
 
-        # call algorithm worker eg pangolin
+        # TODO: filter file - cached variants
+
+        # call algorithm worker eg pangolin with path to filtered file
         channel.basic_publish(exchange='',
                               routing_key='pangolin',
                               body=body,

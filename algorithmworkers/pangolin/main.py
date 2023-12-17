@@ -22,6 +22,7 @@ def main(logger=get_logger()):
         # later use run_alg and use quee to inform about finishing the process
         run_alg(input, output)
         # read properties headers
+        # TODO: enqueue task to parser and checker if all subtasks are done
         redis.input_file(f"{output}.csv")
 
     channel.basic_consume(queue='pangolin', on_message_callback=callback, auto_ack=True)

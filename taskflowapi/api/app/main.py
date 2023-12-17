@@ -48,6 +48,7 @@ async def get_result(task_id: str) -> File:
     file_path_in = file_path_out.replace("_out", "")  # fast mock of redis tasks for mvp
     if os.path.exists(file_path_out) and count_file_lines(file_path_out) == count_file_lines(file_path_in):
         return FileResponse(file_path_out, filename="result.csv")
+    # TODO: use redis to store tasks and check if task is in progress
     elif os.path.exists(file_path_in):
         return {"message": f"task: {task_id} is in progress"}
     return {"message": f"task {task_id} does not exist"}
