@@ -11,10 +11,17 @@ def main(logger=get_logger()):
 
 
     def callback(ch, method, properties, body):
+        body = body.decode('utf-8')
         msg = f"received: {body}"
         logger.info(msg)
 
         # call algorithm worker eg pangolin
+        channel.basic_publish(exchange='',
+                              routing_key='pangolin',
+                              body=body,
+                              properties=pika.BasicProperties(
+                                  headers={'unique_id': body}
+                              ))
 
 
     channel.basic_consume(queue='orchestrator', on_message_callback=callback, auto_ack=True)

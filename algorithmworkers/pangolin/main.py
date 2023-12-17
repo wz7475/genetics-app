@@ -9,7 +9,7 @@ from shared_utils.RedisHandle import RedisHandle
 def main(logger=get_logger()):
     connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq', heartbeat=0))
     channel = connection.channel()
-    channel.queue_declare(queue='hello')
+    channel.queue_declare(queue='pangolin')
 
     redis = RedisHandle()
 
@@ -24,7 +24,7 @@ def main(logger=get_logger()):
         # read properties headers
         redis.input_file(f"{output}.csv")
 
-    channel.basic_consume(queue='hello', on_message_callback=callback, auto_ack=True)
+    channel.basic_consume(queue='pangolin', on_message_callback=callback, auto_ack=True)
 
     channel.start_consuming()
 
