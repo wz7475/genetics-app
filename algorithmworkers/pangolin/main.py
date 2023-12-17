@@ -1,10 +1,6 @@
-import os
-from uuid import uuid4
-
 import pika
 
 from app.logger import get_logger
-from app.config import data_path
 from app.run_alg import run_alg
 from app.data import get_path
 from shared_utils.RedisHandle import RedisHandle

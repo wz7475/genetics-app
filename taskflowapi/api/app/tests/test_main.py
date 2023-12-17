@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 
-from api.app.main import app
+from taskflowapi.api.app.main import app
 
 testclient = TestClient(app)
 

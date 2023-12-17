@@ -23,6 +23,6 @@ RUN git clone https://github.com/tkzeng/Pangolin.git
 # Install Pangolin
 RUN cd Pangolin && pip install . && cd ..
 
-COPY ./requirements.txt /code/requirements.txt
+COPY requirements.txt /code/requirements.txt
 
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
