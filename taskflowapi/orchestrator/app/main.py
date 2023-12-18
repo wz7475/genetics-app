@@ -1,6 +1,7 @@
 import pika
 
 from logger import get_logger
+from algorithms.config import ALL_ALGORITHMS
 
 
 
@@ -18,12 +19,13 @@ def main(logger=get_logger()):
         # TODO: filter file - cached variants
 
         # call algorithm worker eg pangolin with path to filtered file
-        channel.basic_publish(exchange='',
-                              routing_key='pangolin',
-                              body=body,
-                              properties=pika.BasicProperties(
-                                  headers={'unique_id': body}
-                              ))
+        for algorithm in ALL_ALGORITHMS:
+            channel.basic_publish(exchange='',
+                                  routing_key=algorithm,
+                                  body=body,
+                                  properties=pika.BasicProperties(
+                                      headers={'unique_id': body}
+                                  ))
 
 
     channel.basic_consume(queue='orchestrator', on_message_callback=callback, auto_ack=True)

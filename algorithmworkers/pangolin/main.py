@@ -20,7 +20,10 @@ def main(logger=get_logger()):
         input = get_path(f"{unique_id}.csv")
         output = get_path(f"{unique_id}_out")
         # later use run_alg and use quee to inform about finishing the process
+
+        # TODO: convert input to required format - tool inside container
         run_alg(input, output)
+        # TODO: convert output to required format - tool inside container
         # read properties headers
         # TODO: enqueue task to parser and checker if all subtasks are done
         redis.input_file(f"{output}.csv")
