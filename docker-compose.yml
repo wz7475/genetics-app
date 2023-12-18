@@ -3,6 +3,7 @@ version: '3.8'
 services:
   api:
     build: taskflowapi/api
+    container_name: api
     volumes:
       - ./taskflowapi/api/app:/code/app
       - shared-volume:/code/data
@@ -33,13 +34,30 @@ services:
     networks:
       - shared-network
 
+  parser:
+    build: taskflowapi/parser
+    container_name: parser
+    volumes:
+      - ./taskflowapi/parser/app:/code/app
+      - shared-volume:/code/app/data
+      - ./taskflowapi/shared_utils:/code/app/shared_utils
+    working_dir: /code/app
+    command: bash -c "python3 main.py"
+    depends_on:
+      - api
+      - rabbitmq
+      - redis
+      - orchestrator
+      - pangolin
+    networks:
+      - shared-network
+
   pangolin:
     build: algorithmworkers/pangolin
     volumes:
       - ./algorithmworkers/pangolin/app:/code/app
       - ./algorithmworkers/pangolin/main.py:/code/main.py
       - shared-volume:/code/data
-      - ./taskflowapi/shared_utils:/code/shared_utils
     command: python3 main.py
     depends_on:
       - api
