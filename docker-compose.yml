@@ -2,11 +2,12 @@ version: '3.8'
 
 services:
   api:
-    build: ./api
+    build: taskflowapi/api
+    container_name: api
     volumes:
-      - ./api/app:/code/app
+      - ./taskflowapi/api/app:/code/app
       - shared-volume:/code/data
-      - ./shared_utils:/code/shared_utils
+      - ./taskflowapi/shared_utils:/code/shared_utils
     command: uvicorn app.main:app --host 0.0.0.0 --port 80
     ports:
       - "8080:80"
@@ -16,13 +17,47 @@ services:
     networks:
         - shared-network
 
-  pangolin:
-    build: ./pangolin
+  orchestrator:
+    build: taskflowapi/orchestrator
+    container_name: orchestrator
     volumes:
-      - ./pangolin/app:/code/app
-      - ./pangolin/main.py:/code/main.py
+      - ./taskflowapi/orchestrator/app:/code/app
+      - shared-volume:/code/app/data
+      - ./taskflowapi/shared_utils:/code/app/shared_utils
+      - ./algorithmworkers/config.py:/code/app/algorithms/config.py
+    working_dir: /code/app
+    command: bash -c "python3 main.py"
+    depends_on:
+      - api
+      - rabbitmq
+      - redis
+    networks:
+      - shared-network
+
+  parser:
+    build: taskflowapi/parser
+    container_name: parser
+    volumes:
+      - ./taskflowapi/parser/app:/code/app
+      - shared-volume:/code/app/data
+      - ./taskflowapi/shared_utils:/code/app/shared_utils
+    working_dir: /code/app
+    command: bash -c "python3 main.py"
+    depends_on:
+      - api
+      - rabbitmq
+      - redis
+      - orchestrator
+      - pangolin
+    networks:
+      - shared-network
+
+  pangolin:
+    build: algorithmworkers/pangolin
+    volumes:
+      - ./algorithmworkers/pangolin/app:/code/app
+      - ./algorithmworkers/pangolin/main.py:/code/main.py
       - shared-volume:/code/data
-      - ./shared_utils:/code/shared_utils
     command: python3 main.py
     depends_on:
       - api
