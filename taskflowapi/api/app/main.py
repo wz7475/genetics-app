@@ -61,3 +61,14 @@ async def read_root(gene: str, chrom: int, pos: int, ref: str, alt: str):
     con = RedisHandle()
     return {"value": f"{con.get_data(key)}"}
 
+@app.get("/redisRecordHard")
+async def read_root(key: str):
+    con = RedisHandle()
+    return {"value": f"{con.get_data(key)}"}
+
+@app.get("/createOuput")
+async def read_root(id: str):
+    con = RedisHandle()
+    con.create_out_file(os.path.join("data", id))
+    return {"state": "success"}
+

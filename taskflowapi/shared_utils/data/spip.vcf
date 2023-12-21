@@ -1,0 +1,64 @@
+##fileformat=VCFv4.0
+##assembly=GRCh37/hg19
+##contig=<ID=chr1,length=249250621>
+##contig=<ID=chr2,length=243199373>
+##contig=<ID=chr3,length=198022430>
+##contig=<ID=chr4,length=191154276>
+##contig=<ID=chr5,length=180915260>
+##contig=<ID=chr6,length=171115067>
+##contig=<ID=chr7,length=159138663>
+##contig=<ID=chr8,length=146364022>
+##contig=<ID=chr9,length=141213431>
+##contig=<ID=chr10,length=135534747>
+##contig=<ID=chr11,length=135006516>
+##contig=<ID=chr12,length=133851895>
+##contig=<ID=chr13,length=115169878>
+##contig=<ID=chr14,length=107349540>
+##contig=<ID=chr15,length=102531392>
+##contig=<ID=chr16,length=90354753>
+##contig=<ID=chr17,length=81195210>
+##contig=<ID=chr18,length=78077248>
+##contig=<ID=chr19,length=59128983>
+##contig=<ID=chr20,length=63025520>
+##contig=<ID=chr21,length=48129895>
+##contig=<ID=chrX,length=155270560>
+##contig=<ID=chr22,length=51304566>
+##contig=<ID=chrY,length=59373566>
+##ALT=<ID=*,Description="Represents allele(s) other than observed.">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
+chr17	29527550	c.1000del	CA	C	.	.	.
+chr17	29527557	c.1007_1008delinsAA	TGG	TAA	.	.	.
+chr17	29527558	c.1007G>A	G	A	.	.	.
+chr17	29527559	c.1008G>A	G	A	.	.	.
+chr17	29527566	c.1016del	AA	A	.	.	.
+chr17	29527568	c.1018_1031del	CTCTGTCATTTTCCT	C	.	.	.
+chr17	29527569	c.1019_1020del	TCT	T	.	.	.
+chr17	29527570	c.1020dup	CT	CTT	.	.	.
+chr17	29527571	c.1021_1022del	TGT	T	.	.	.
+chr17	29527571	c.1021_1031del	TGTCATTTTCCT	T	.	.	.
+chr17	29527572	c.1022dup	GT	GTT	.	.	.
+chr17	29527590	c.1039C>T	C	T	.	.	.
+chr17	29527599	c.1049dup	GT	GTT	.	.	.
+chr17	29527611	c.1061del	AA	A	.	.	.
+chr17	29527614	c.1062+1G>A	G	A	.	.	.
+chr17	29527616	c.1062+3A>G	A	G	.	.	.
+chr17	29527613	c.1062G>A	G	A	.	.	.
+chr17	29528042	c.1063-13G>A	G	A	.	.	.
+chr17	29528041	c.1063-14T>A	T	A	.	.	.
+chr17	29528054	c.1063-1G>T	G	T	.	.	.
+chr17	29528053	c.1063-2A>G,T	A	G,T,	.	.	.
+chr17	29528084	c.1093_1094del	CTC	C	.	.	.
+chr17	29528086	c.1094C>G	C	G	.	.	.
+chr17	29528097	c.1105C>T	C	T	.	.	.
+chr17	29528123	c.1132_1133dup	TGA	TGAGA	.	.	.
+chr17	29528124	c.1133_1136del	GACTG	G	.	.	.
+chr17	29528130	c.1139_1142delinsAAAA	CTTGT	CAAAA	.	.	.
+chr17	29528144	c.1153del	TC	T	.	.	.
+chr17	29528176	c.1185_1185+2del	AGGT	A	.	.	.
+chr17	29528178	c.1185+1G>A,C,T	G	A,C,T,	.	.	.
+chr17	29528178	c.1185+2_1185+3delinsG	GTG	GG	.	.	.
+chr17	29528177	c.1185G>A	G	A	.	.	.
+chr17	29528427	c.1186-1del	AG	A	.	.	.
+chr17	29528427	c.1186-2A>T	A	T	.	.	.
+chr17	29528441	c.1198C>T	C	T	.	.	.
+chr17	29528444	c.1202del	AA	A	.	.	.

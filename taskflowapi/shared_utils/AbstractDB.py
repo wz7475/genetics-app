@@ -23,3 +23,12 @@ class AbstractDB(ABC):
         :return: filepath
         """
         pass
+
+    @abstractmethod
+    def get_input_file(self, task_id: str, algorythm: str) -> str:
+        """
+
+        :param task_id: id of task
+        :param algorythm: name of algorithm eg. pangolin
+        :return:
+        """
