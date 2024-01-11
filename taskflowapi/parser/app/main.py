@@ -18,6 +18,7 @@ def main(logger: logging.Logger, database: AbstractDB):
 
         # TODO: pass alg_name, annotation_column_name, variant_cols_names
         database.save_annotation_from_file_to_db(output_file_path)
+        logger.info(f"Saved annotations from: {output_file_path}")
 
 
     channel.basic_consume(queue='parser', on_message_callback=callback, auto_ack=True)

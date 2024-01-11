@@ -25,9 +25,7 @@ class RedisHandle(AbstractDB):
             return False
 
     def input_data(self, key, value):
-        # Set a key-value pair in Redis
         self.redis_client.set(key, value)
-        # get_logger().info(f"Stored data in Redis: Key='{key}', Value='{value}'")
 
     def save_annotation_from_file_to_db(self, filepath):
         """
@@ -41,7 +39,6 @@ class RedisHandle(AbstractDB):
                 key = "".join(tuple(row.values())[:-1])
                 value = row['Pangolin']
                 self.input_data(key, value)
-        get_logger().info(f"Stored data in Redis from file: {filepath}")
 
     def get_filtered_input_file_for_alg(self, task_id, algorythm):
         """

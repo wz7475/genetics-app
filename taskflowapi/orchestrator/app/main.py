@@ -18,6 +18,7 @@ def main(logger=get_logger()):
         # call algorithm worker eg pangolin with path to filtered file
         for algorithm in ALL_ALGORITHMS:
             alg_input_file_path = database.get_filtered_input_file_for_alg(unique_id, algorithm)
+            logger.info(f"Created file without cached variants for {algorithm} - task: {unique_id}")
             channel.basic_publish(
                 exchange='',
                 routing_key=algorithm,
