@@ -1,0 +1,1 @@
+curl --location "localhost:8080/getResult?task_id=$1"
