@@ -65,6 +65,20 @@ services:
     networks:
       - shared-network
 
+  spip:
+    build: algorithmworkers/spip_mock
+    volumes:
+      - ./algorithmworkers/spip_mock/app:/code/app
+      - ./algorithmworkers/spip_mock/alg:/code/alg
+      - ./algorithmworkers/spip_mock/main.py:/code/main.py
+      - shared-volume:/code/data
+    command: python3 main.py
+    depends_on:
+      - api
+      - rabbitmq
+    networks:
+      - shared-network
+
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:3-management

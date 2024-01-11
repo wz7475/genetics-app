@@ -15,11 +15,14 @@ def main(logger: logging.Logger, database: AbstractDB):
 
     def callback(ch, method, properties, body):
         output_file_path = properties.headers["output_file_path"]
+        alg_name = properties.headers["algorithm"]
 
         # TODO: pass alg_name, annotation_column_name, variant_cols_names
-        database.save_annotation_from_file_to_db(output_file_path)
-        logger.info(f"Saved annotations from: {output_file_path}")
-
+        if alg_name == "pangolin":
+            database.save_annotation_from_file_to_db(output_file_path)
+            logger.info(f"Saved {alg_name} annotations from: {output_file_path}")
+        else:
+            logger.info(f"Caching for {alg_name} not implemented/supported")
 
     channel.basic_consume(queue='parser', on_message_callback=callback, auto_ack=True)
     channel.start_consuming()

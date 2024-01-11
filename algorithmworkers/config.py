@@ -1,1 +1,1 @@
-ALL_ALGORITHMS = ["pangolin"]
+ALL_ALGORITHMS = ["pangolin", "spip"]

@@ -1,7 +1,7 @@
 import pika
 
 from app.logger import get_logger
-from app.run_alg import run_alg
+from alg.run import run_alg
 from app.data import get_path
 from app.config import alg_name
 
@@ -9,7 +9,7 @@ from app.config import alg_name
 def main(logger=get_logger()):
     connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq', heartbeat=0))
     channel = connection.channel()
-    channel.queue_declare(queue='pangolin')
+    channel.queue_declare(queue=alg_name)
 
     def callback(ch, method, properties, body):
         unique_id = properties.headers['unique_id']
