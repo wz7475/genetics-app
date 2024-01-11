@@ -13,24 +13,28 @@ def main(logger=get_logger()):
 
     def callback(ch, method, properties, body):
         unique_id = properties.headers['unique_id']
-        # TODO ffs I'm veeery dumb, use get_path insted of creating path in db
-        input_file_path = properties.headers['input_file_path']
-        msg = f"{unique_id}: {body}, \n file path: {input_file_path}"
-        logger.info(msg)
-        output = get_path(f"{unique_id}_{alg_name}_out")
+
+        input_file_path = properties.headers['alg_input_file_path']
+        output_file_path = get_path(f"{unique_id}_{alg_name}_out")
 
         # TODO: convert input to required format - tool inside container
-        run_alg(input_file_path, output)
-        output += ".csv"
+        run_alg(input_file_path, output_file_path)
+        output_file_path += ".csv"
         # TODO: convert output to required format - tool inside container
-        logger.info(f"path to parsed file: {output}")
-        channel.basic_publish(exchange='',
-                              routing_key='parser',
-                              body=bytes(output, 'utf-8'),
-                              properties=pika.BasicProperties(
-                                  headers={'unique_id': unique_id, "algorithm": alg_name}
-                              ))
 
+        channel.basic_publish(
+            exchange='',
+            routing_key='parser',
+            body=b"",
+            properties=pika.BasicProperties(
+                headers={
+                    'unique_id': unique_id,
+                    "algorithm": alg_name,
+                    "output_file_path": output_file_path
+                }
+            )
+        )
+        logger.info(f"Enqueued parsing: {unique_id}")
 
     channel.basic_consume(queue='pangolin', on_message_callback=callback, auto_ack=True)
 

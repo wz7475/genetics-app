@@ -1,6 +1,6 @@
 # enqueue job
 curl --location 'localhost:8080/uploadfile' \
---form 'file=@"./taskflowapi/data/brca2.csv"'
+--form 'file=@"./taskflowapi/data/brca2_2rec.csv"'
 
 
 # get result

@@ -9,6 +9,7 @@ from shared_utils.logger import get_logger
 from .data.SharedVolumeRepo import SharedVolumeRepo
 from .utils import count_file_lines, get_uuid4
 from shared_utils.RedisHandle import RedisHandle
+
 app = FastAPI()
 
 
@@ -27,18 +28,23 @@ def shutdown_event():
     connection.close()
 
 
-
 @app.get("/test")
 async def read_root():
     return {"message": "Job enqueued"}
+
 
 @app.post("/uploadfile")
 async def create_upload_file(file: UploadFile = File(...)):
     unique_id = get_uuid4()
     await repo.save_file(file, f"{unique_id}.csv")
-    channel.basic_publish(exchange='',
-                          routing_key='orchestrator',
-                          body=bytes(unique_id, encoding='utf-8'))
+    channel.basic_publish(
+        exchange='',
+        routing_key='orchestrator',
+        body=b"",
+        properties=pika.BasicProperties(
+            headers={'unique_id': unique_id}
+        )
+    )
     return {"message": f"Job enqueued, task id: {unique_id}"}
 
 
@@ -54,21 +60,21 @@ async def get_result(task_id: str) -> File:
     return {"message": f"task {task_id} does not exist"}
 
 
-
 @app.get("/redisRecord")
 async def read_root(gene: str, chrom: int, pos: int, ref: str, alt: str):
     key = str(gene) + str(chrom) + str(pos) + str(ref) + str(alt)
     con = RedisHandle()
     return {"value": f"{con.get_data(key)}"}
 
+
 @app.get("/redisRecordHard")
 async def read_root(key: str):
     con = RedisHandle()
     return {"value": f"{con.get_data(key)}"}
+
 
 @app.get("/createOuput")
 async def read_root(id: str):
     con = RedisHandle()
     con.create_out_file(os.path.join("data", id))
     return {"state": "success"}
-

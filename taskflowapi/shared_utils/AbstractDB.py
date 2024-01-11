@@ -16,7 +16,7 @@ class AbstractDB(ABC):
         pass
 
     @abstractmethod
-    async def input_file(self, filepath: str) -> None:
+    async def save_annotation_from_file_to_db(self, filepath: str) -> None:
         """
         gets task id and returns the filepath if file exists
         :param filepath: path to file that is to be writen into DB
@@ -25,7 +25,7 @@ class AbstractDB(ABC):
         pass
 
     @abstractmethod
-    def get_input_file(self, task_id: str, algorythm: str) -> str:
+    def get_filtered_input_file_for_alg(self, task_id: str, algorythm: str) -> str:
         """
 
         :param task_id: id of task

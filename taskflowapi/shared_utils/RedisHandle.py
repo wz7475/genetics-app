@@ -29,7 +29,7 @@ class RedisHandle(AbstractDB):
         self.redis_client.set(key, value)
         # get_logger().info(f"Stored data in Redis: Key='{key}', Value='{value}'")
 
-    def input_file(self, filepath):
+    def save_annotation_from_file_to_db(self, filepath):
         """
         for now only csv files, after demo handle all sorts of files with fileparser or sth like that
         :param filepath: path to file that is adnotated to be calculated
@@ -43,7 +43,7 @@ class RedisHandle(AbstractDB):
                 self.input_data(key, value)
         get_logger().info(f"Stored data in Redis from file: {filepath}")
 
-    def get_input_file(self, task_id, algorythm):
+    def get_filtered_input_file_for_alg(self, task_id, algorythm):
         """
         @TODO please make many func out of this, I know its bad, just for demo "muliple in one"
 
