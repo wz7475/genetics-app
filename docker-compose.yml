@@ -79,6 +79,18 @@ services:
     networks:
       - shared-network
 
+  spip:
+    build: ./spip
+    volumes:
+      - shared-volume:/code/data
+      - ./spip/perf_tests:/usr/src/app/SPiP/perf_tests
+    command: tail -f /dev/null
+    depends_on:
+      - api
+      - rabbitmq
+    networks:
+      - shared-network
+
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:3-management
