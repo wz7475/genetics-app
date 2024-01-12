@@ -1,0 +1,52 @@
+<mxfile host="Electron" modified="2024-01-12T08:52:55.410Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.0.3 Chrome/114.0.5735.289 Electron/25.8.4 Safari/537.36" etag="yzUltsuhX-YNoT7aRLAM" version="22.0.3" type="device">
+  <diagram name="Page-1" id="XNeFHbz2xfQ6_hqrUXkY">
+    <mxGraphModel dx="1034" dy="838" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="v4SBzU5yJXGPgwKChC0x-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="v4SBzU5yJXGPgwKChC0x-1" target="v4SBzU5yJXGPgwKChC0x-2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v4SBzU5yJXGPgwKChC0x-1" value="API" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="50" y="240" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="v4SBzU5yJXGPgwKChC0x-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="v4SBzU5yJXGPgwKChC0x-2" target="v4SBzU5yJXGPgwKChC0x-8" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v4SBzU5yJXGPgwKChC0x-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="v4SBzU5yJXGPgwKChC0x-2" target="v4SBzU5yJXGPgwKChC0x-9" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v4SBzU5yJXGPgwKChC0x-2" value="ORCHESTRATOR" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="250" y="240" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="v4SBzU5yJXGPgwKChC0x-6" value="- save task_id.csv" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry x="50" y="300" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="v4SBzU5yJXGPgwKChC0x-7" value="- create input file &lt;br&gt;without cached &lt;br&gt;variants for each alg" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry x="245" y="300" width="130" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="v4SBzU5yJXGPgwKChC0x-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="v4SBzU5yJXGPgwKChC0x-8" target="v4SBzU5yJXGPgwKChC0x-14" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v4SBzU5yJXGPgwKChC0x-8" value="PANGOLIN" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="450" y="160" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="v4SBzU5yJXGPgwKChC0x-16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="v4SBzU5yJXGPgwKChC0x-9" target="v4SBzU5yJXGPgwKChC0x-14" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v4SBzU5yJXGPgwKChC0x-9" value="SPIP" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="450" y="310" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="v4SBzU5yJXGPgwKChC0x-13" value="- convert input from system format &lt;br&gt;to alg own/specfic&lt;br&gt;- run alg and create output file&lt;br&gt;- convert output from alg own/specific&lt;br&gt;to system format" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry x="400" y="380" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="v4SBzU5yJXGPgwKChC0x-14" value="PARSER" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="670" y="240" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="v4SBzU5yJXGPgwKChC0x-15" value="- save annotations from&amp;nbsp;&lt;br&gt;file to db" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry x="660" y="310" width="150" height="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
