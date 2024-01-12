@@ -4,6 +4,7 @@ from app.logger import get_logger
 from app.run_alg import run_alg
 from app.data import get_path
 from app.config import alg_name
+from app.converter import convert_rename_annotation_column
 
 
 def main(logger=get_logger()):
@@ -20,7 +21,10 @@ def main(logger=get_logger()):
         # TODO: convert input to required format - tool inside container
         run_alg(input_file_path, output_file_path)
         output_file_path += ".csv"
-        # TODO: convert output to required format - tool inside container
+
+        convert_rename_annotation_column(output_file_path)
+        logger.info(f"Converted file {output_file_path}")
+        # TODO: convert output to required format - more robust tool than function above
 
         channel.basic_publish(
             exchange='',

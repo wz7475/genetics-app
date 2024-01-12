@@ -27,17 +27,13 @@ class RedisHandle(AbstractDB):
     def input_data(self, key, value):
         self.redis_client.set(key, value)
 
-    def save_annotation_from_file_to_db(self, filepath):
-        """
-        for now only csv files, after demo handle all sorts of files with fileparser or sth like that
-        :param filepath: path to file that is adnotated to be calculated
-        :return:
-        """
+    def save_annotation_from_file_to_db(self, filepath, alg_name):
         with open(filepath, newline='') as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
                 key = "".join(tuple(row.values())[:-1])
-                value = row['Pangolin']
+                key += alg_name
+                value = row[alg_name]
                 self.input_data(key, value)
 
     def get_filtered_input_file_for_alg(self, task_id, algorythm):

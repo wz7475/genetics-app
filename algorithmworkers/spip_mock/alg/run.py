@@ -4,6 +4,8 @@ import sys
 
 
 def run_alg(input_csv_file: str, output_file: str) -> None:
+    if not output_file.endswith(".csv"):
+        output_file += ".csv"
     with open(input_csv_file, 'r') as csv_input:
         with open(output_file, 'w', newline='') as csv_output:
             reader = csv.reader(csv_input)
