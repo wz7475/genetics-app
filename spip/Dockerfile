@@ -17,6 +17,6 @@ RUN R -e "install.packages(c('foreach', 'doParallel', 'randomForest'), dependenc
 
 # RUN wget -P /usr/src/app/SPiP/RefFiles https://sourceforge.net/projects/splicing-prediction-pipeline/files/transcriptome/transcriptome_hg38.RData/download
 # RUN wget -P /usr/src/app/SPiP/RefFiles https://sourceforge.net/projects/splicing-prediction-pipeline/files/transcriptome/transcriptome_hg19.RData/download
-COPY ./ref_files/transcriptome_hg38.RData /usr/src/app/SPiP/RefFiles/transcriptome_hg38.RData
+#COPY ./ref_files/transcriptome_hg38.RData /usr/src/app/SPiP/RefFiles/transcriptome_hg38.RData
 
-COPY ./ref_files/transcriptome_hg19.RData /usr/src/app/SPiP/RefFiles/transcriptome_hg19.RData
+#COPY ./ref_files/transcriptome_hg19.RData /usr/src/app/SPiP/RefFiles/transcriptome_hg19.RData
