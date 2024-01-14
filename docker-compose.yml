@@ -76,10 +76,11 @@ services:
 
   # algorithms
   pangolin:
-    build: 
+    build:
       context: ./algorithmworkers/
       dockerfile: ./pangolin/Dockerfile
     volumes:
+      - ./taskflowapi/shared_utils/data:/code/data_test
       - shared-volume:/code/data
     depends_on:
       - api
@@ -92,11 +93,10 @@ services:
       context: ./algorithmworkers/
       dockerfile: ./spip/Dockerfile
     volumes:
-      - ./taskflowapi/shared_utils/data:/code/data
-      #- shared-volume:/code/data
-        #depends_on:
-        #- api
-        #- rabbitmq
+      - ./taskflowapi/shared_utils/data:/code/data_test
+      - shared-volume:/code/data
+    depends_on:
+      - rabbitmq
     networks:
       - shared-network
 
