@@ -23,6 +23,9 @@ class TaskHandlerRedis(TasKHandler):
     def get_task_field(self, task_id, field: str) -> str:
         return self.client.hget(task_id, field)
 
+    def check_if_field_exists(self, task_id: str, field: str) -> bool:
+        return bool(self.client.hexists(task_id, field))
+
 
 def get_task_handler_redis() -> TasKHandler:
     redis_host = "redisalg"

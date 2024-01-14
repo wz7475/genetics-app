@@ -14,3 +14,6 @@ class TasKHandler(ABC):
     @abstractmethod
     def get_task_field(self, task_id, field: str) -> str:
         pass
+
+    def check_if_field_exists(self, task_id: str, field: str) -> bool:
+        pass

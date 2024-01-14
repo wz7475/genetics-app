@@ -12,7 +12,7 @@ from .utils import count_file_lines, get_uuid4
 from shared_utils.RedisHandle import RedisHandle
 from shared_utils.TaskHandler import TasKHandler
 from shared_utils.TaskHandlerRedis import get_task_handler_redis
-from available_algorithms import ALL_ALGORITHMS # algs available for user
+from available_algorithms import ALL_ALGORITHMS  # algs available for user
 
 app = FastAPI()
 
@@ -60,16 +60,17 @@ async def read_root():
 
 
 @app.get("/getResult")
-async def get_result(task_id: str) -> File:
-    file_path_out = str(await repo.get_file_path(task_id))
-    file_path_in = file_path_out.replace("_out", "")  # fast mock of redis tasks for mvp
-    if os.path.exists(file_path_out) and count_file_lines(
-        file_path_out
-    ) == count_file_lines(file_path_in):
-        return FileResponse(file_path_out, filename="result.csv")
-    # TODO: use redis to store tasks and check if task is in progress
-    elif os.path.exists(file_path_in):
+async def get_result(
+    task_id: str,
+    task_handler: TasKHandler = Depends(get_task_handler_redis),
+) -> File:
+    if task_handler.get_task_field(task_id, "status") == "ready":
+        path = os.path.join("data", f"{task_id}_out.tsv")
+        return FileResponse(path, filename="result.tsv")
+
+    if task_handler.check_if_field_exists(task_id, "status"):
         return {"message": f"task: {task_id} is in progress"}
+
     return {"message": f"task {task_id} does not exist"}
 
 
