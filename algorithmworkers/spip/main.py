@@ -54,8 +54,11 @@ class SPIP(Algorithm):
 
                 dest.writeheader()
                 for row in source:
-                    varId = row["HGVS"].split(" ")[0]
-                    dest.writerow({"gene": "aaa", "varID": varId})
+                    try:
+                        varId = row["HGVS"].split(" ")[0]
+                        dest.writerow({"gene": "aaa", "varID": varId})
+                    except KeyError:
+                        dest.writerow({"gene": "aaa", "varID": "."})
 
     def prepare_output(self, output_file_path):
         with open(output_file_path, mode="w") as output_file:
