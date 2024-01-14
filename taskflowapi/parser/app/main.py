@@ -17,7 +17,11 @@ def main(logger: logging.Logger, database: AbstractDB):
         output_file_path = properties.headers["output_file_path"]
         alg_name = properties.headers["algorithm"]
 
-        database.save_annotation_from_file_to_db(output_file_path, alg_name)
+        # database.save_annotation_from_file_to_db(output_file_path, alg_name)
+        """
+        - temporary skipping caching due to system format migration csv -> tsv
+        - logs just to keep track of flow
+        """
         logger.info(f"Saved {alg_name} annotations from: {output_file_path}")
 
     channel.basic_consume(queue='parser', on_message_callback=callback, auto_ack=True)

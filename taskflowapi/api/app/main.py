@@ -36,13 +36,16 @@ async def read_root():
 @app.post("/uploadfile")
 async def create_upload_file(file: UploadFile = File(...)):
     unique_id = get_uuid4()
-    await repo.save_file(file, f"{unique_id}.csv")
+    await repo.save_file(file, f"{unique_id}.tsv")
     channel.basic_publish(
         exchange='',
         routing_key='orchestrator',
         body=b"",
         properties=pika.BasicProperties(
-            headers={'unique_id': unique_id}
+            headers={
+                'unique_id': unique_id,
+                'algorithms': "pangolin,spip"
+            }
         )
     )
     return {"message": f"Job enqueued, task id: {unique_id}"}

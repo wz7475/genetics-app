@@ -1,7 +1,8 @@
+import os.path
+
 import pika
 
 from logger import get_logger
-from algorithms.config import ALL_ALGORITHMS
 from shared_utils.RedisHandle import RedisHandle
 
 
@@ -13,11 +14,17 @@ def main(logger=get_logger()):
 
     def callback(ch, method, properties, body):
         unique_id = properties.headers['unique_id']
+        all_algorithms = properties.headers['algorithms'].split(",")
         logger.info(f"Received {unique_id}")
 
-        # call algorithm worker eg pangolin with path to filtered file
-        for algorithm in ALL_ALGORITHMS:
-            alg_input_file_path = database.get_filtered_input_file_for_alg(unique_id, algorithm)
+        for algorithm in all_algorithms:
+            # alg_input_file_path = database.get_filtered_input_file_for_alg(unique_id, algorithm)
+            alg_input_file_path = os.path.join("data", f"{unique_id}.tsv")
+            """
+            - temporary skipping caching due to system format migration csv -> tsv
+            - logs just to keep track of flow
+            - after migration each alg will receive own input file, without cached variants
+            """
             logger.info(f"Created file without cached variants for {algorithm} - task: {unique_id}")
             channel.basic_publish(
                 exchange='',
