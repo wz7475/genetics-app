@@ -4,9 +4,10 @@ import pika
 
 from logger import get_logger
 from shared_utils.RedisHandle import RedisHandle
+from shared_utils.TaskHandlerRedis import get_task_handler_redis, TasKHandler
 
 
-def main(logger=get_logger()):
+def main(task_handler: TasKHandler = get_task_handler_redis(), logger=get_logger()):
     connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq', heartbeat=0))
     channel = connection.channel()
     channel.queue_declare(queue='orchestrator')
@@ -37,6 +38,7 @@ def main(logger=get_logger()):
                     }
                 )
             )
+            task_handler.update_task_field(unique_id, algorithm, "enqueued")
             logger.info(f"Enqueued annotating: {algorithm} - {unique_id}")
 
     channel.basic_consume(queue='orchestrator', on_message_callback=callback, auto_ack=True)
