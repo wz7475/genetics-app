@@ -2,33 +2,43 @@ from ..common import Algorithm
 import csv
 import subprocess
 import os
+from pprint import pprint
 
 
-class Pangolin(Algorithm):
+class SPIP(Algorithm):
     def __init__(self):
-        super().__init__("pangolin")
+        super().__init__("spip")
 
     def get_alg_input_name(self):
-        return os.path.join(self.tmp_dir_name, "input.csv")
+        return os.path.join(self.tmp_dir_name, "input.txt")
 
     def get_alg_output_name(self):
-        return os.path.join(self.tmp_dir_name, "output.csv")
+        return os.path.join(self.tmp_dir_name, "output.txt")
 
     def run(self):
         process = subprocess.Popen(
+            f"Rscript SPiPv2.1_main.r --input {self.get_alg_input_name()} --output {self.get_alg_output_name()}",
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            shell=True,
+            cwd="/usr/src/app/SPiP/",
+        )
+        """
+        process = subprocess.Popen(
             [
-                "pangolin",
+                "Rscript",
+                "SPiPv2.1_main.r",
+                "--input",
                 self.get_alg_input_name(),
-                "GRCh38.primary_assembly.genome.fa.gz",
-                "gencode.v38.annotation.db",
-                os.path.join(self.tmp_dir_name, "output"),
+                "--output",
+                self.get_alg_output_name(),
             ],
             stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            cwd="/usr/src/app/SPiP/",
         )
+        """
         process.wait()
-
-        self.logger.info(subprocess.check_output(["ls", self.tmp_dir_name]))
-        self.logger.info(subprocess.check_output(["cat", self.get_alg_output_name()]))
 
         return process.returncode
 
@@ -38,30 +48,19 @@ class Pangolin(Algorithm):
                 source = csv.DictReader(input_file, delimiter="\t")
                 dest = csv.DictWriter(
                     alg_input_file,
-                    delimiter=",",
-                    fieldnames=["CHROM", "POS", "REF", "ALT"],
+                    delimiter="\t",
+                    fieldnames=["gene", "varID"],
                 )
 
                 dest.writeheader()
                 for row in source:
-                    chromosome = row["Chr"][3:]
-                    position = row["POS"]
-                    reference = row["Ref"]
-                    alternative = row["Alt"]
-
-                    dest.writerow(
-                        {
-                            "CHROM": chromosome,
-                            "POS": position,
-                            "REF": reference,
-                            "ALT": alternative,
-                        }
-                    )
+                    varId = row["HGVS"].split(" ")[0]
+                    dest.writerow({"gene": "aaa", "varID": varId})
 
     def prepare_output(self, output_file_path):
         with open(output_file_path, mode="w") as output_file:
             with open(self.get_alg_output_name()) as alg_output_file:
-                source = csv.DictReader(alg_output_file, delimiter=",")
+                source = csv.DictReader(alg_output_file, delimiter="\t")
                 dest = csv.DictWriter(
                     output_file,
                     delimiter="\t",
@@ -70,10 +69,10 @@ class Pangolin(Algorithm):
 
                 dest.writeheader()
                 for row in source:
-                    result = row["Pangolin"]
+                    result = row["SPiPscore"]
 
                     dest.writerow({self.name: result})
 
 
 if __name__ == "__main__":
-    Pangolin().main()
+    SPIP().main()

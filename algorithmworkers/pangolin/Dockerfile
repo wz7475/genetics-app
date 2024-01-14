@@ -4,7 +4,9 @@ FROM python:3.8
 # Set the working directory in the container
 WORKDIR /code
 
-
+# ========================================
+#       Algorithm specific steps
+# ========================================
 # Install older version of setuptools as required for pyvcf
 RUN pip install "setuptools<58" --upgrade
 
@@ -20,13 +22,20 @@ RUN git clone https://github.com/tkzeng/Pangolin.git
 # Install Pangolin
 RUN cd Pangolin && pip install . && cd ..
 
-COPY requirements.txt /code/requirements.txt
-
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
-
-
 # Download GRCh38 genomic data files
-#RUN wget https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_38/GRCh38.primary_assembly.genome.fa.gz
-#RUN wget https://www.dropbox.com/sh/6zo0aegoalvgd9f/AADOhGYJo8tbUhpscp3wSFj6a/gencode.v38.annotation.db
-COPY ./38/gencode.v38.annotation.db .
-COPY ./38/GRCh38.primary_assembly.genome.fa.gz .
+RUN wget https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_38/GRCh38.primary_assembly.genome.fa.gz
+RUN wget https://www.dropbox.com/sh/6zo0aegoalvgd9f/AADOhGYJo8tbUhpscp3wSFj6a/gencode.v38.annotation.db
+#COPY ./38/gencode.v38.annotation.db .
+#COPY ./38/GRCh38.primary_assembly.genome.fa.gz .
+
+
+# ========================================
+#     Steps shared for all algorithms
+# ========================================
+WORKDIR /code
+COPY ./pangolin /code/algorithmworkers/algorithm
+COPY ./common /code/algorithmworkers/common
+
+RUN pip install --no-cache-dir --upgrade -r /code/algorithmworkers/algorithm/requirements.txt
+
+CMD ["python3", "-m", "algorithmworkers.algorithm.main"]
