@@ -32,6 +32,7 @@ RUN wget https://www.dropbox.com/sh/6zo0aegoalvgd9f/AADOhGYJo8tbUhpscp3wSFj6a/ge
 # ========================================
 #     Steps shared for all algorithms
 # ========================================
+WORKDIR /code
 COPY ./pangolin /code/algorithmworkers/algorithm
 COPY ./common /code/algorithmworkers/common
 

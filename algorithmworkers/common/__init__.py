@@ -58,6 +58,7 @@ class Algorithm(ABC):
         with tempfile.TemporaryDirectory() as tmp_dir_name:
             self.tmp_dir_name = tmp_dir_name
             self.prepare_input(input_file_path)
+            self.logger.info(f"Prepared input file {input_file_path}")
 
             return_code = self.run()
 

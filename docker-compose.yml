@@ -52,30 +52,6 @@ services:
     networks:
       - shared-network
 
-  pangolin:
-    build: 
-      context: ./algorithmworkers/
-      dockerfile: ./pangolin/Dockerfile
-    volumes:
-      - shared-volume:/code/data
-    depends_on:
-      - api
-      - rabbitmq
-    networks:
-      - shared-network
-
-  spip:
-    build: ./spip
-    volumes:
-      - shared-volume:/code/data
-      - ./spip/perf_tests:/usr/src/app/SPiP/perf_tests
-    command: tail -f /dev/null
-    depends_on:
-      - api
-      - rabbitmq
-    networks:
-      - shared-network
-
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:3-management
@@ -97,6 +73,33 @@ services:
       - redis-data:/data
     networks:
       - shared-network
+
+  # algorithms
+  pangolin:
+    build: 
+      context: ./algorithmworkers/
+      dockerfile: ./pangolin/Dockerfile
+    volumes:
+      - shared-volume:/code/data
+    depends_on:
+      - api
+      - rabbitmq
+    networks:
+      - shared-network
+
+  spip:
+    build: 
+      context: ./algorithmworkers/
+      dockerfile: ./spip/Dockerfile
+    volumes:
+      - ./taskflowapi/shared_utils/data:/code/data
+      #- shared-volume:/code/data
+        #depends_on:
+        #- api
+        #- rabbitmq
+    networks:
+      - shared-network
+
 
 
 networks:
