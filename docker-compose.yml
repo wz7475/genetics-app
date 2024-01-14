@@ -8,6 +8,7 @@ services:
       - ./taskflowapi/api/app:/code/app
       - shared-volume:/code/data
       - ./taskflowapi/shared_utils:/code/shared_utils
+      - ./algorithmworkers/config.py:/code/available_algorithms.py
     command: uvicorn app.main:app --host 0.0.0.0 --port 80
     ports:
       - "8080:80"
@@ -40,6 +41,7 @@ services:
       - ./taskflowapi/parser/app:/code/app
       - shared-volume:/code/app/data
       - ./taskflowapi/shared_utils:/code/app/shared_utils
+      - ./algorithmworkers/config.py:/code/app/available_algorithms.py
     working_dir: /code/app
     command: bash -c "python3 main.py"
     depends_on:

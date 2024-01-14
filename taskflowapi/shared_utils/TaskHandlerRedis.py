@@ -20,6 +20,9 @@ class TaskHandlerRedis(TasKHandler):
     def update_task_field(self, task_id: str, field: str, value: str) -> None:
         self.client.hset(task_id, field, value)
 
+    def get_task_field(self, task_id, field: str) -> str:
+        return self.client.hget(task_id, field)
+
 
 def get_task_handler_redis() -> TasKHandler:
     redis_host = "redisalg"

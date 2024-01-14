@@ -10,3 +10,7 @@ class TasKHandler(ABC):
     @abstractmethod
     def update_task_field(self, task_id: str, field: str, value: str) -> None:
         pass
+
+    @abstractmethod
+    def get_task_field(self, task_id, field: str) -> str:
+        pass

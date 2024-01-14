@@ -12,6 +12,7 @@ from .utils import count_file_lines, get_uuid4
 from shared_utils.RedisHandle import RedisHandle
 from shared_utils.TaskHandler import TasKHandler
 from shared_utils.TaskHandlerRedis import get_task_handler_redis
+from available_algorithms import ALL_ALGORITHMS # algs available for user
 
 app = FastAPI()
 
