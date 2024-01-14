@@ -38,30 +38,31 @@ class RedisHandle(AbstractDB):
 
     def get_filtered_input_file_for_alg(self, task_id, algorythm):
         """
-        @TODO please make many func out of this, I know its bad, just for demo "muliple in one"
+        functions creates new filtered file for annotation specific algorythm
 
         :param task_id:
         :param algorythm:
         :return:
         """
-        in_filepath = os.path.join("data", f"{task_id}.csv")
-        out_filepath = os.path.join("data", f"{task_id}_{algorythm}.csv")
+        in_filepath = os.path.join("data", f"{task_id}.tsv")
+        out_filepath = os.path.join("data", f"{task_id}_{algorythm}.tsv")
+
         with open(in_filepath) as in_file, \
                 open(out_filepath, 'w') as out_file:
-            out_file.write(in_file.readline())
-            for line in in_file.readlines():
-                key = line.replace(",", "")[:-1]  # new line at the end
+            out_file.write(in_file.readline()) # copy header
+            source = csv.DictReader(in_file, delimiter="\t")
+
+            for row in source:
+                line = in_file.readline()
+                key = self.get_key_from_tsv(row)
                 if not self.get_data(key):
                     out_file.write(line)
-                    get_logger().info(f"No data for key: '{key}'")
-                    # pass
-        get_logger().info(f"Created new out file without annotated variants")
+
+        get_logger().info(f"Created new out file without annotated variants for {algorythm}, {task_id}")
         return out_filepath
 
     def create_out_file(self, task_id):
-        # in_filepath = os.path.join("data", f"{task_id}.csv")
         in_filepath = f"{task_id}.csv"
-        # out_filepath = os.path.join("data", f"{task_id}_out.csv")
         out_filepath = f"{task_id}_out.csv"
         with open(in_filepath) as in_file, \
                 open(out_filepath, 'w') as out_file:
@@ -71,3 +72,27 @@ class RedisHandle(AbstractDB):
                 value = self.get_data(key)
                 out_file.write(f'{line[:-1]},{value}\n')
         get_logger().info(f"Created out file for user")
+
+    def read_keys_tsv(self, input_file):
+        """
+        Should it be in this class? probably not
+        :param input_file:
+        :return:
+        """
+        source = csv.DictReader(input_file, delimiter="\t")
+        keys = []
+        for row in source:
+            chromosome = row["Chr"][3:]
+            position = row["POS"]
+            reference = row["Ref"]
+            alternative = row["Alt"]
+            key = f"{chromosome},{position},{reference},{alternative}"
+            keys.append(key)
+        return keys
+
+    def get_key_from_tsv(self, row) -> str:
+        chromosome = row["Chr"][3:]
+        position = row["POS"]
+        reference = row["Ref"]
+        alternative = row["Alt"]
+        return f"{chromosome},{position},{reference},{alternative}"
