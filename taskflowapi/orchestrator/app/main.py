@@ -1,11 +1,18 @@
 import os.path
 
+import pandas as pd
 import pika
 
 from logger import get_logger
 from shared_utils.RedisHandle import RedisHandle
 from shared_utils.TaskHandlerRedis import get_task_handler_redis, TasKHandler
 
+
+def remove_other_columns(path: str):
+    columns = ["Chr", "POS", "Ref", "Alt", "HGVS"]
+    df = pd.read_csv(path, sep="\t")
+    df = df[columns]
+    df.to_csv(path, sep="\t", index=False)
 
 def main(task_handler: TasKHandler = get_task_handler_redis(), logger=get_logger()):
     connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq', heartbeat=0))
@@ -18,6 +25,7 @@ def main(task_handler: TasKHandler = get_task_handler_redis(), logger=get_logger
         all_algorithms = properties.headers['algorithms'].split(",")
         logger.info(f"Received {unique_id}")
 
+        remove_other_columns(os.path.join("data", f"{unique_id}.tsv"))
         for algorithm in all_algorithms:
             # alg_input_file_path = database.get_filtered_input_file_for_alg(unique_id, algorithm)
             alg_input_file_path = os.path.join("data", f"{unique_id}.tsv")
