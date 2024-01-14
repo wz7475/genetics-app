@@ -6,13 +6,13 @@ from fastapi import FastAPI, UploadFile, File, Depends
 from fastapi.responses import FileResponse
 import pika
 
-from shared_utils.logger import get_logger
+from taskflowapi.shared_utils.logger import get_logger
 from .data.SharedVolumeRepo import SharedVolumeRepo
 from .utils import count_file_lines, get_uuid4
-from shared_utils.RedisHandle import RedisHandle
-from shared_utils.TaskHandler import TasKHandler
-from shared_utils.TaskHandlerRedis import get_task_handler_redis
-from available_algorithms import ALL_ALGORITHMS  # algs available for user
+from taskflowapi.shared_utils.RedisHandle import RedisHandle
+from taskflowapi.shared_utils.TaskHandler import TasKHandler
+from taskflowapi.shared_utils.TaskHandlerRedis import get_task_handler_redis
+# from available_algorithms import ALL_ALGORITHMS  # algs available for user
 
 app = FastAPI()
 
