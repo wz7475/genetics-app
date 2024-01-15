@@ -4,10 +4,12 @@ from taskflowapi.api.app.main import app
 
 testclient = TestClient(app)
 
+
 def test_simply_endpoint():
     response = testclient.get("/test")
     assert response.status_code == 200
     assert response.json() == {"message": "Job enqueued"}
+
 
 def test_startup():
     """

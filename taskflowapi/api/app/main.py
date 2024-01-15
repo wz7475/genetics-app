@@ -1,18 +1,15 @@
 import os.path
-from typing import Annotated
-from uuid import uuid4
 
 from fastapi import FastAPI, UploadFile, File, Depends
 from fastapi.responses import FileResponse
 import pika
 
-from shared_utils.logger import get_logger
+from taskflowapi.shared_utils.logger import get_logger
 from .data.SharedVolumeRepo import SharedVolumeRepo
-from .utils import count_file_lines, get_uuid4
-from shared_utils.RedisHandle import RedisHandle
-from shared_utils.TaskHandler import TasKHandler
-from shared_utils.TaskHandlerRedis import get_task_handler_redis
-from available_algorithms import ALL_ALGORITHMS  # algs available for user
+from .utils import get_uuid4
+from taskflowapi.shared_utils.RedisHandle import RedisHandle
+from taskflowapi.shared_utils.TaskHandler import TasKHandler
+from taskflowapi.shared_utils.TaskHandlerRedis import get_task_handler_redis
 
 app = FastAPI()
 
@@ -46,7 +43,7 @@ async def startup_event():
     )
     channel = connection.channel()
     channel.queue_declare(queue="hello")
-    con = RedisHandle()
+    RedisHandle()  # con = ...
 
 
 @app.on_event("shutdown")
@@ -75,20 +72,20 @@ async def get_result(
 
 
 @app.get("/redisRecord")
-async def read_root(gene: str, chrom: int, pos: int, ref: str, alt: str):
+async def get_redisRecord(gene: str, chrom: int, pos: int, ref: str, alt: str):
     key = str(gene) + str(chrom) + str(pos) + str(ref) + str(alt)
     con = RedisHandle()
     return {"value": f"{con.get_data(key)}"}
 
 
 @app.get("/redisRecordHard")
-async def read_root(key: str):
+async def get_redisRecordHard(key: str):
     con = RedisHandle()
     return {"value": f"{con.get_data(key)}"}
 
 
-@app.get("/createOuput")
-async def read_root(id: str):
+@app.get("/createOutput")
+async def get_createOutput(id: str):
     con = RedisHandle()
     con.create_out_file(os.path.join("data", id))
     return {"state": "success"}

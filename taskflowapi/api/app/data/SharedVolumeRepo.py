@@ -1,5 +1,5 @@
 import os
-from fastapi import File, UploadFile
+from fastapi import UploadFile
 from .AbractRepo import AbstractRepo
 from ..config import data_path
 
