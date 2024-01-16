@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { sendFile } from '@/api/sendFile'
 import { getFileStatus } from '@/api/getFileStatus'
+import { downloadFile } from '@/api/downloadFile'
 
 /*
 const files = ref([
@@ -40,6 +41,7 @@ const reloadFiles = async () => {
             status,
             time: new Date(file.date),
             name: file.name,
+            id: file.id,
         })
     }
 
@@ -133,6 +135,7 @@ const submit = async (event) => {
                     density="default"
                     icon="mdi-download"
                     variant="text"
+                    @click="downloadFile(file.id)"
                 ></v-btn>
             </v-sheet>
         </v-sheet>
