@@ -4,15 +4,6 @@ import { sendFile } from '@/api/sendFile'
 import { getFileStatus } from '@/api/getFileStatus'
 import { downloadFile } from '@/api/downloadFile'
 
-/*
-const files = ref([
-    { status: 'expired', time: new Date(), name: 'Mój pliczek 1' },
-    { status: 'ready', time: new Date(), name: 'Mój pliczek 2' },
-    { status: 'expired', time: new Date(), name: 'Mój pliczek 3' },
-    { status: 'pending', time: new Date(), name: 'Mój pliczek 4' },
-    { status: 'expired', time: new Date(), name: 'Mój pliczek 5' },
-])
-*/
 const filesReady = ref(false)
 const files = ref([])
 
