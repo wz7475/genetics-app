@@ -10,6 +10,7 @@ class RedisHandle(AbstractDB):
         redis_host = 'redisalg'
         redis_port = 6379
         self.redis_client = redis.StrictRedis(host=redis_host, port=redis_port, decode_responses=True)
+        self.fildnames = ["Chr", "POS", "Ref", "Alt", "HGVS"]
 
     def _check_if_key_exists(self, key: str) -> bool:
         if self.redis_client.get(key) is None:
@@ -18,7 +19,6 @@ class RedisHandle(AbstractDB):
 
     def get_data(self, key) -> str:
         value = self.redis_client.get(key)
-        get_logger().info(f"Read data from Redis: Key='{key}', Value='{value}'")
         if value is not None:
             return value
         else:
@@ -27,13 +27,23 @@ class RedisHandle(AbstractDB):
     def input_data(self, key, value):
         self.redis_client.set(key, value)
 
-    def save_annotation_from_file_to_db(self, filepath, alg_name):
-        with open(filepath, newline='') as csvfile:
-            reader = csv.DictReader(csvfile)
-            for row in reader:
-                key = "".join(tuple(row.values())[:-1])
-                key += alg_name
-                value = row[alg_name]
+    def save_annotation_from_file_to_db(self, filepath, alg_name, task_id):
+        """
+        enters records from file into db
+
+        :param filepath:
+        :param alg_name:
+        :param task_id:
+        :return:
+        """
+        filtered_file = os.path.join("data", f"{task_id}_{alg_name}_out.tsv")
+        with open(filtered_file, newline='') as tsvfile, \
+                open(filepath, 'w') as out_file:
+            source = csv.DictReader(tsvfile, delimiter="\t", fieldnames=self.fildnames)
+            # out_file.readline()  # read header
+            for row in source:
+                key = self.get_key_from_tsv(row, alg_name)
+                value = out_file.readline()
                 self.input_data(key, value)
 
     def get_filtered_input_file_for_alg(self, task_id, algorythm):
@@ -49,50 +59,48 @@ class RedisHandle(AbstractDB):
 
         with open(in_filepath) as in_file, \
                 open(out_filepath, 'w') as out_file:
-            out_file.write(in_file.readline()) # copy header
-            source = csv.DictReader(in_file, delimiter="\t")
+            source = csv.DictReader(in_file, delimiter="\t", fieldnames=self.fildnames)
 
             for row in source:
-                line = in_file.readline()
-                key = self.get_key_from_tsv(row)
+                row: dict
+                key = self.get_key_from_tsv(row, algorythm)
                 if not self.get_data(key):
-                    out_file.write(line)
+                    out_file.write("\t".join(row.values()) + "\n")
 
         get_logger().info(f"Created new out file without annotated variants for {algorythm}, {task_id}")
         return out_filepath
 
-    def create_out_file(self, task_id):
-        in_filepath = f"{task_id}.csv"
-        out_filepath = f"{task_id}_out.csv"
-        with open(in_filepath) as in_file, \
-                open(out_filepath, 'w') as out_file:
-            out_file.write(f"{in_file.readline()[:-1]},RESULT\n")
-            for line in in_file.readlines():
-                key = line.replace(",", "")[:-1]
-                value = self.get_data(key)
-                out_file.write(f'{line[:-1]},{value}\n')
-        get_logger().info(f"Created out file for user")
-
-    def read_keys_tsv(self, input_file):
+    def create_out_file(self, task_id, algorithms):
         """
-        Should it be in this class? probably not
-        :param input_file:
+        creates output file for user based on algorithms and task id
+
+        :param task_id:
+        :param algorithms:
         :return:
         """
-        source = csv.DictReader(input_file, delimiter="\t")
-        keys = []
-        for row in source:
-            chromosome = row["Chr"][3:]
-            position = row["POS"]
-            reference = row["Ref"]
-            alternative = row["Alt"]
-            key = f"{chromosome},{position},{reference},{alternative}"
-            keys.append(key)
-        return keys
+        in_filepath = os.path.join("data", f"{task_id}.tsv")
+        out_filepath = os.path.join("data", f"{task_id}_out.tsv")
+        alg_names = "\t".join(algorithms)
+        with open(in_filepath) as in_file, \
+                open(out_filepath, 'w') as out_file:
+            source = csv.DictReader(in_file, delimiter="\t", fieldnames=self.fildnames)
+            first_line = "\t".join(source.fieldnames) + f"\t{alg_names}\n"
+            out_file.write(first_line)
+            in_file.readline()
 
-    def get_key_from_tsv(self, row) -> str:
+            for row in source:
+                row: dict
+                values = ""
+                for algorythm in algorithms:
+                    key = self.get_key_from_tsv(row, algorythm)
+                    values += f"{self.get_data(key)}\t"
+                out_file.write("\t".join(row.values()) + f'\t{values}\n')
+        get_logger().info(f"Created out file for task: {task_id}")
+
+    def get_key_from_tsv(self, row: dict, algorythm: str) -> str:
+        # get_logger().info(row.keys())
         chromosome = row["Chr"][3:]
         position = row["POS"]
         reference = row["Ref"]
         alternative = row["Alt"]
-        return f"{chromosome},{position},{reference},{alternative}"
+        return f"{algorythm},{chromosome},{position},{reference},{alternative}"

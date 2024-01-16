@@ -2,7 +2,6 @@ import logging
 import os.path
 
 import pika
-import pandas as pd
 
 from logger import get_logger
 from shared_utils.RedisHandle import RedisHandle
@@ -29,11 +28,7 @@ def main(
         alg_name = properties.headers["algorithm"]
         unique_id = properties.headers["unique_id"]
 
-        # database.save_annotation_from_file_to_db(output_file_path, alg_name)
-        """
-        - temporary skipping caching due to system format migration csv -> tsv
-        - logs just to keep track of flow
-        """
+        database.save_annotation_from_file_to_db(output_file_path, alg_name, unique_id)
         task_handler.update_task_field(unique_id, alg_name, "annotated")
         logger.info(f"Saved {alg_name} annotations from: {output_file_path}")
 
@@ -65,23 +60,7 @@ def main(
                 return
 
         # if all annotated
-        input_file_path = os.path.join("data", f"{unique_id}.tsv")
-        output_file_path = os.path.join("data", f"{unique_id}_out.tsv")
-        algorithms_output_paths = []
-        for algorithm_name in all_requested_algorithms:
-            path = os.path.join("data", f"{unique_id}_{algorithm_name}_out.tsv")
-            algorithms_output_paths.append(path)
-
-        input_df = pd.read_csv(input_file_path, sep="\t")
-        for path in algorithms_output_paths:
-            algorithm_df = pd.read_csv(path, sep="\t")
-            input_df = pd.concat([input_df, algorithm_df], axis=1)
-            logger.info(algorithm_df.columns)
-            logger.info(algorithm_df.columns[0] in list(input_df.columns))
-        logger.info(input_df.columns[-3:])
-        input_df.to_csv(output_file_path, sep="\t", index=False)
-        logger.info(f"{unique_id} merged")
-        task_handler.update_task_field(unique_id, "status", "ready")
+        database.create_out_file(unique_id, all_requested_algorithms.keys())
 
     channel.basic_consume(
         queue="merger", on_message_callback=merge_callback, auto_ack=True

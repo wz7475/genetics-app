@@ -2,7 +2,6 @@ from ..common import Algorithm
 import csv
 import subprocess
 import os
-from pprint import pprint
 
 
 class SPIP(Algorithm):
@@ -73,7 +72,6 @@ class SPIP(Algorithm):
                 dest.writeheader()
                 for row in source:
                     result = row["SPiPscore"]
-
                     dest.writerow({self.name: result})
 
 

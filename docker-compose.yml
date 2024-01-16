@@ -84,8 +84,8 @@ services:
       context: ./algorithmworkers/
       dockerfile: ./pangolin/Dockerfile
     volumes:
-      - ./taskflowapi/shared_utils/data:/code/data_test
       - shared-volume:/code/data
+    working_dir: /code
     depends_on:
       - api
       - rabbitmq
@@ -96,14 +96,14 @@ services:
     build: 
       context: ./algorithmworkers/
       dockerfile: ./spip/Dockerfile
+    working_dir: /code
     volumes:
-      - ./taskflowapi/shared_utils/data:/code/data_test
       - shared-volume:/code/data
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     networks:
       - shared-network
-
 
 
 networks:

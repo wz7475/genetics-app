@@ -16,10 +16,11 @@ class AbstractDB(ABC):
         pass
 
     @abstractmethod
-    async def save_annotation_from_file_to_db(self, filepath: str, alg_name) -> None:
+    async def save_annotation_from_file_to_db(self, filepath: str, alg_name, task_id) -> None:
         """
         stores annotation from file to db
-        :param filepath: path to file that is adnotated to be calculated
+        :param task_id:
+        :param filepath: path to file that is annotated to be calculated
         :param alg_name: name of algorithm added to key and to name of column with annotation
         """
         pass
