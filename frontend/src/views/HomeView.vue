@@ -1,5 +1,14 @@
 <script setup>
-const uploadFile = () => {}
+import { sendFile } from '@/api/sendFile'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const submit = async (event) => {
+    await sendFile(event)
+
+    router.push('/history')
+}
 </script>
 
 <template>
@@ -22,12 +31,9 @@ const uploadFile = () => {}
 
             <v-btn
                 color="primary"
-                min-width="228"
                 size="x-large"
                 variant="flat"
-                class="mb-8"
-                to="/history"
-                @click="uploadFile"
+                tag="label"
             >
                 <v-icon
                     icon="mdi-dna"
@@ -36,6 +42,12 @@ const uploadFile = () => {}
                 />
 
                 Annotate file
+                <input
+                    type="file"
+                    hidden
+                    accept=".tsv"
+                    @change="submit"
+                />
             </v-btn>
             <br />
             <v-btn
