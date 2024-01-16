@@ -4,6 +4,7 @@ import csv
 from .logger import get_logger
 from .AbstractDB import AbstractDB
 
+PATH_PREFIX = os.path.join("/code", "data")
 
 class RedisHandle(AbstractDB):
     def __init__(self):
@@ -11,6 +12,7 @@ class RedisHandle(AbstractDB):
         redis_port = 6379
         self.redis_client = redis.StrictRedis(host=redis_host, port=redis_port, decode_responses=True)
         self.fildnames = ["Chr", "POS", "Ref", "Alt", "HGVS"]
+
 
     def _check_if_key_exists(self, key: str) -> bool:
         if self.redis_client.get(key) is None:
@@ -36,11 +38,11 @@ class RedisHandle(AbstractDB):
         :param task_id:
         :return:
         """
-        filtered_file = os.path.join("data", f"{task_id}_{alg_name}_out.tsv")
+        filtered_file = os.path.join(PATH_PREFIX, f"{task_id}_{alg_name}_out.tsv")
         with open(filtered_file, newline='') as tsvfile, \
-                open(filepath, 'w') as out_file:
+                open(filepath) as out_file:
             source = csv.DictReader(tsvfile, delimiter="\t", fieldnames=self.fildnames)
-            # out_file.readline()  # read header
+            out_file.readline()  # read header
             for row in source:
                 key = self.get_key_from_tsv(row, alg_name)
                 value = out_file.readline()
@@ -54,8 +56,8 @@ class RedisHandle(AbstractDB):
         :param algorythm:
         :return:
         """
-        in_filepath = os.path.join("data", f"{task_id}.tsv")
-        out_filepath = os.path.join("data", f"{task_id}_{algorythm}.tsv")
+        in_filepath = os.path.join(PATH_PREFIX, f"{task_id}.tsv")
+        out_filepath = os.path.join(PATH_PREFIX, f"{task_id}_{algorythm}.tsv")
 
         with open(in_filepath) as in_file, \
                 open(out_filepath, 'w') as out_file:
@@ -78,8 +80,8 @@ class RedisHandle(AbstractDB):
         :param algorithms:
         :return:
         """
-        in_filepath = os.path.join("data", f"{task_id}.tsv")
-        out_filepath = os.path.join("data", f"{task_id}_out.tsv")
+        in_filepath = os.path.join(PATH_PREFIX, f"{task_id}.tsv")
+        out_filepath = os.path.join(PATH_PREFIX, f"{task_id}_out.tsv")
         alg_names = "\t".join(algorithms)
         with open(in_filepath) as in_file, \
                 open(out_filepath, 'w') as out_file:

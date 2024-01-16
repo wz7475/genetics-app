@@ -25,7 +25,7 @@ def main(task_handler: TasKHandler = get_task_handler_redis(), logger=get_logger
         all_algorithms = properties.headers['algorithms'].split(",")
         logger.info(f"Received {unique_id}")
 
-        remove_other_columns(os.path.join("data", f"{unique_id}.tsv"))
+        remove_other_columns(os.path.join("..", "data", f"{unique_id}.tsv"))
         for algorithm in all_algorithms:
             alg_input_file_path = database.get_filtered_input_file_for_alg(unique_id, algorithm)
             logger.info(f"Created file without cached variants for {algorithm} - task: {unique_id}")

@@ -1,13 +1,9 @@
-import shutil
-import subprocess
-
 import pika
 import os
 import tempfile
 from abc import ABC, abstractmethod
 
 from .logger import get_logger
-from time import sleep
 
 
 class Algorithm(ABC):
@@ -17,10 +13,7 @@ class Algorithm(ABC):
 
         self.name = name
 
-        self.data_path = "tmp_dir"  # cannot be data -> issue with no emty files being writen to volume
-
-        if not os.path.exists(self.data_path):
-            os.mkdir(self.data_path)
+        self.data_path = "/code/data"
 
         self.logger = get_logger(self.name)
 
@@ -41,15 +34,11 @@ class Algorithm(ABC):
         unique_id = properties.headers["unique_id"]
 
         input_file_path = properties.headers["alg_input_file_path"]
-        output_file_path_tmp = os.path.join(
+        output_file_path = os.path.join(
             self.data_path, f"{unique_id}_{self.name}_out.tsv"
         )
 
-        output_file_path = os.path.join(
-            "data", f"{unique_id}_{self.name}_out.tsv"  # data - volume
-        )
-
-        self.process_task(input_file_path, output_file_path_tmp, output_file_path)
+        self.process_task(input_file_path, output_file_path)
 
         self.channel.basic_publish(
             exchange="",
@@ -65,7 +54,7 @@ class Algorithm(ABC):
         )
         self.logger.info(f"Enqueued parsing: {unique_id}")
 
-    def process_task(self, input_file_path, output_file_path_tmp, output_file_path):
+    def process_task(self, input_file_path, output_file_path):
         with tempfile.TemporaryDirectory() as tmp_dir_name:
             self.tmp_dir_name = tmp_dir_name
             self.prepare_input(input_file_path)
@@ -74,16 +63,10 @@ class Algorithm(ABC):
             return_code = self.run()
 
             self.logger.info(f"{self.name} DONE for {input_file_path}, ret code: {return_code}")
+            self.logger.info(f"prepering output for file: {output_file_path}")
+            self.prepare_output(output_file_path)
 
-            self.logger.info(f"prepering output for file: {output_file_path_tmp}")
-
-            self.prepare_output(output_file_path_tmp)
-
-        self.tmp_dir_name = None # TODO uncomment
-
-        subprocess.run(["cp", output_file_path_tmp, "data"], check=True, stdout=subprocess.PIPE)
-
-        # os.remove(output_file_path_tmp)
+        self.tmp_dir_name = None
 
         self.logger.info(f"Converted file {output_file_path}")
 

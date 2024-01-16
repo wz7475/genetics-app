@@ -23,7 +23,7 @@ services:
     container_name: orchestrator
     volumes:
       - ./taskflowapi/orchestrator/app:/code/app
-      - shared-volume:/code/app/data
+      - shared-volume:/code/data
       - ./taskflowapi/shared_utils:/code/app/shared_utils
     working_dir: /code/app
     command: bash -c "python3 main.py"
@@ -39,7 +39,7 @@ services:
     container_name: parser
     volumes:
       - ./taskflowapi/parser/app:/code/app
-      - shared-volume:/code/app/data
+      - shared-volume:/code/data
       - ./taskflowapi/shared_utils:/code/app/shared_utils
       - ./algorithmworkers/config.py:/code/app/available_algorithms.py
     working_dir: /code/app
