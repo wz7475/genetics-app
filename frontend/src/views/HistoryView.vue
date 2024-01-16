@@ -4,15 +4,6 @@ import { sendFile } from '@/api/sendFile'
 import { getFileStatus } from '@/api/getFileStatus'
 import { downloadFile } from '@/api/downloadFile'
 
-/*
-const files = ref([
-    { status: 'expired', time: new Date(), name: 'Mój pliczek 1' },
-    { status: 'ready', time: new Date(), name: 'Mój pliczek 2' },
-    { status: 'expired', time: new Date(), name: 'Mój pliczek 3' },
-    { status: 'pending', time: new Date(), name: 'Mój pliczek 4' },
-    { status: 'expired', time: new Date(), name: 'Mój pliczek 5' },
-])
-*/
 const filesReady = ref(false)
 const files = ref([])
 
@@ -25,13 +16,13 @@ const colorMap = {
 const removeFile = (index) => {
     files.value.splice(index, 1)
 
-    const fileStorage = JSON.parse(localStorage.getItem('files'))
+    const fileStorage = JSON.parse(localStorage.getItem('files') || '[]')
     fileStorage.splice(index, 1)
     localStorage.setItem('files', JSON.stringify(fileStorage))
 }
 
 const reloadFiles = async () => {
-    const fileStorage = JSON.parse(localStorage.getItem('files'))
+    const fileStorage = JSON.parse(localStorage.getItem('files') || '[]')
     files.value = []
     filesReady.value = false
 
@@ -59,15 +50,36 @@ const submit = async (event) => {
 </script>
 
 <template>
-    <v-container class="fill-height justify-center text-center d-flex">
+    <v-container class="fill-height justify-center d-flex flex-column">
+        <div
+            class="w-100 d-flex justify-start align-center"
+            style="max-width: 1000px"
+        >
+            <v-btn
+                icon="mdi-arrow-left"
+                variant="text"
+                to="/"
+            ></v-btn>
+
+            <v-img
+                max-width="60"
+                height="60"
+                src="@/assets/logo.svg"
+            />
+            <h1 class="text-h3 font-weight-bold">Gene annotation</h1>
+        </div>
         <v-sheet
-            class="pa-6 flex-grow-1 ga-4 d-flex flex-column"
+            class="pa-6 ga-4 d-flex flex-column w-100"
             style="max-width: 1000px"
             elevation="8"
             rounded
         >
-            <div class="d-flex ga-8 align-center justify-space-between">
-                <h4 class="text-h5 font-weight-bold">Previous annotations</h4>
+            <div class="d-flex ga-8 align-center">
+                <h4 class="text-h5 font-weight-bold ml-4">
+                    Previous annotations
+                </h4>
+
+                <v-spacer />
 
                 <v-btn
                     color="primary"
