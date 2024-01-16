@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import { sendFile } from '@/api/sendFile'
 
 const files = ref([
     { status: 'expired', time: new Date(), name: 'Mój pliczek 1' },
@@ -15,7 +16,10 @@ const colorMap = {
     expired: 'grey',
 }
 
-const submit = () => {}
+const submit = async (event) => {
+    await sendFile(event)
+    // update list
+}
 </script>
 
 <template>
@@ -33,7 +37,7 @@ const submit = () => {}
                     color="primary"
                     size="x-large"
                     variant="flat"
-                    @click="submit"
+                    tag="label"
                 >
                     <v-icon
                         icon="mdi-dna"
@@ -42,6 +46,12 @@ const submit = () => {}
                     />
 
                     Annotate file
+                    <input
+                        type="file"
+                        hidden
+                        accept=".tsv"
+                        @change="submit"
+                    />
                 </v-btn>
             </div>
             <v-sheet
