@@ -1,7 +1,9 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { sendFile } from '@/api/sendFile'
+import { getFileStatus } from '@/api/getFileStatus'
 
+/*
 const files = ref([
     { status: 'expired', time: new Date(), name: 'Mój pliczek 1' },
     { status: 'ready', time: new Date(), name: 'Mój pliczek 2' },
@@ -9,6 +11,9 @@ const files = ref([
     { status: 'pending', time: new Date(), name: 'Mój pliczek 4' },
     { status: 'expired', time: new Date(), name: 'Mój pliczek 5' },
 ])
+*/
+const filesReady = ref(false)
+const files = ref([])
 
 const colorMap = {
     ready: 'success',
@@ -16,9 +21,38 @@ const colorMap = {
     expired: 'grey',
 }
 
+const removeFile = (index) => {
+    files.value.splice(index, 1)
+
+    const fileStorage = JSON.parse(localStorage.getItem('files'))
+    fileStorage.splice(index, 1)
+    localStorage.setItem('files', JSON.stringify(fileStorage))
+}
+
+const reloadFiles = async () => {
+    const fileStorage = JSON.parse(localStorage.getItem('files'))
+    files.value = []
+    filesReady.value = false
+
+    for (const file of fileStorage) {
+        const status = (await getFileStatus(file.id)).status
+        files.value.push({
+            status,
+            time: new Date(file.date),
+            name: file.name,
+        })
+    }
+
+    filesReady.value = true
+}
+
+onMounted(async () => {
+    await reloadFiles()
+})
+
 const submit = async (event) => {
     await sendFile(event)
-    // update list
+    await reloadFiles()
 }
 </script>
 
@@ -54,6 +88,11 @@ const submit = async (event) => {
                     />
                 </v-btn>
             </div>
+            <v-progress-circular
+                v-if="!filesReady"
+                indeterminate
+                class="ma-auto"
+            ></v-progress-circular>
             <v-sheet
                 v-for="(file, index) in files"
                 :key="file.name"
@@ -80,7 +119,7 @@ const submit = async (event) => {
                         variant="text"
                         class="pr-1"
                         :icon="isHovering ? 'mdi-close' : 'mdi-emoticon-sad'"
-                        @click="files.splice(index, 1)"
+                        @click="removeFile(index)"
                     ></v-btn>
                 </v-hover>
 
