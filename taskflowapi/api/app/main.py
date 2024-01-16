@@ -30,7 +30,7 @@ async def create_upload_file(
             headers={"unique_id": unique_id, "algorithms": "pangolin,spip"}
         ),
     )
-    return {"message": f"Job enqueued, task id: {unique_id}"}
+    return {"message": f"Job enqueued, task id: {unique_id}", "id": unique_id}
 
 
 @app.on_event("startup")
