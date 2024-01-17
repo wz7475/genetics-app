@@ -3,7 +3,10 @@
 # from taskflowapi.api.app.main import app
 #
 # testclient = TestClient(app)
-#
+
+
+def test_sanity_check():
+    assert 1 == 1
 #
 # def test_simply_endpoint():
 #     response = testclient.get("/test")
