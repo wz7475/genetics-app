@@ -39,13 +39,13 @@ async def create_upload_file(
 ):
     unique_id = get_uuid4()
     await repo.save_file(file, f"{unique_id}.tsv")
-    task_handler.create_task(unique_id, ["spip"])  # TODO add pangolin
+    task_handler.create_task(unique_id, ["pangolin", "spip"])
     channel.basic_publish(
         exchange="",
         routing_key="orchestrator",
         body=b"",
         properties=pika.BasicProperties(
-            headers={"unique_id": unique_id, "algorithms": "spip"}  # TODO add pangolin
+            headers={"unique_id": unique_id, "algorithms": "pangolin,spip"}
         ),
     )
     return {"message": "success", "id": unique_id}
@@ -77,8 +77,9 @@ async def get_status(
 
     return {"status": "expired"}
 
-@app.post("/getDetialedStatus")
-async def get_status(
+
+@app.post("/getDetailedStatus")
+async def get_detailed_status(
         task_id: str = Body(default=None),
         task_handler: TasKHandler = Depends(get_task_handler_redis)
 ) -> dict:
