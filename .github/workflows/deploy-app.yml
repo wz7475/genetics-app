@@ -37,6 +37,6 @@ jobs:
       run: |
         if [ -f tests/requirements.txt ]; then pip install -r tests/requirements.txt; fi
         pytest
-    - name: Deploy application
-      run: |
-        ssh rszczep2@bigubu.pw.edu.pl './build_and_run.sh'
+    # - name: Deploy application
+    #   run: |
+    #     ssh rszczep2@bigubu.ii.pw.edu.pl './build_and_run.sh'
