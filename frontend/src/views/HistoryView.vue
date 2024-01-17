@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { sendFile } from '@/api/sendFile'
 import { getFileStatus } from '@/api/getFileStatus'
 import { downloadFile } from '@/api/downloadFile'
@@ -39,8 +39,15 @@ const reloadFiles = async () => {
     filesReady.value = true
 }
 
+const polling = ref(null)
+
 onMounted(async () => {
     await reloadFiles()
+    polling.value = setInterval(reloadFiles, 5000)
+})
+
+onUnmounted(() => {
+    clearInterval(polling.value)
 })
 
 const submit = async (event) => {
