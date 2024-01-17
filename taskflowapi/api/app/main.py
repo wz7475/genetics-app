@@ -79,7 +79,7 @@ async def get_status(
 
 
 @app.post("/getRedisValue")
-async def get_status(
+async def get_redis_val(
         key=Body(default=None),
         task_handler: TasKHandler = Depends(get_task_handler_redis)
 ) -> dict:
