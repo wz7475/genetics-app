@@ -27,9 +27,6 @@ class Pangolin(Algorithm):
         )
         process.wait()
 
-        self.logger.info(subprocess.check_output(["ls", self.tmp_dir_name]))
-        self.logger.info(subprocess.check_output(["cat", self.get_alg_output_name()]))
-
         return process.returncode
 
     def prepare_input(self, input_file_path):
