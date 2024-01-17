@@ -11,6 +11,6 @@ WORKDIR /app
 RUN apt-get update
 RUN apt-get install nginx -y
 COPY --from=build /app/dist /var/www/html/
-COPY ./nginix.conf /usr/share/nginx/
+COPY ./nginx.conf /usr/share/nginx/
 EXPOSE 80
-CMD ["nginx", "-c", "nginix.conf"]
+CMD ["nginx", "-c", "nginx.conf"]

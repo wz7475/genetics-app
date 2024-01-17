@@ -61,6 +61,7 @@ def main(
 
         # if all annotated
         database.create_out_file(unique_id, all_requested_algorithms.keys())
+        task_handler.update_task_field(unique_id, "status", "ready")
 
     channel.basic_consume(
         queue="merger", on_message_callback=merge_callback, auto_ack=True

@@ -13,7 +13,6 @@ class RedisHandle(AbstractDB):
         self.redis_client = redis.StrictRedis(host=redis_host, port=redis_port, decode_responses=True)
         self.fildnames = ["Chr", "POS", "Ref", "Alt", "HGVS"]
 
-
     def _check_if_key_exists(self, key: str) -> bool:
         if self.redis_client.get(key) is None:
             return False
@@ -38,15 +37,15 @@ class RedisHandle(AbstractDB):
         :param task_id:
         :return:
         """
-        filtered_file = os.path.join(PATH_PREFIX, f"{task_id}_{alg_name}_out.tsv")
-        with open(filtered_file, newline='') as tsvfile, \
+        original_file = os.path.join(PATH_PREFIX, f"{task_id}_{alg_name}.tsv")
+        with open(original_file, newline='') as tsvfile, \
                 open(filepath) as out_file:
             source = csv.DictReader(tsvfile, delimiter="\t", fieldnames=self.fildnames)
             out_file.readline()  # read header
             for row in source:
                 key = self.get_key_from_tsv(row, alg_name)
                 value = out_file.readline()
-                self.input_data(key, value)
+                self.input_data(key, value[:-1])  # cut out \n
 
     def get_filtered_input_file_for_alg(self, task_id, algorythm):
         """
@@ -82,13 +81,14 @@ class RedisHandle(AbstractDB):
         """
         in_filepath = os.path.join(PATH_PREFIX, f"{task_id}.tsv")
         out_filepath = os.path.join(PATH_PREFIX, f"{task_id}_out.tsv")
+
         alg_names = "\t".join(algorithms)
         with open(in_filepath) as in_file, \
                 open(out_filepath, 'w') as out_file:
             source = csv.DictReader(in_file, delimiter="\t", fieldnames=self.fildnames)
             first_line = "\t".join(source.fieldnames) + f"\t{alg_names}\n"
             out_file.write(first_line)
-            in_file.readline()
+            in_file.readline() # read headers
 
             for row in source:
                 row: dict
@@ -96,6 +96,7 @@ class RedisHandle(AbstractDB):
                 for algorythm in algorithms:
                     key = self.get_key_from_tsv(row, algorythm)
                     values += f"{self.get_data(key)}\t"
+                    # get_logger().warn(f"{algorythm}, {key}, {values}")
                 out_file.write("\t".join(row.values()) + f'\t{values}\n')
         get_logger().info(f"Created out file for task: {task_id}")
 
