@@ -7,6 +7,7 @@ on:
   push:
     branches:
     - "*"
+    - '!main'
   pull_request:
     branches:
     - "main"
@@ -16,7 +17,6 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: taskflowapi/api
 
     runs-on: ubuntu-latest
 
@@ -30,7 +30,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install flake8 pytest
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        if [ -f taskflowapi/api/requirements.txt ]; then pip install -r taskflowapi/api/requirements.txt; fi
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -39,4 +39,5 @@ jobs:
         flake8 . --count --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
+        if [ -f tests/requirements.txt ]; then pip install -r tests/requirements.txt; fi
         pytest
