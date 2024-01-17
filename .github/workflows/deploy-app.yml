@@ -6,10 +6,6 @@ name: Python application
 on:
   push:
     branches:
-    - "*"
-    - '!main'
-  pull_request:
-    branches:
     - "main"
 
 jobs:
@@ -41,3 +37,6 @@ jobs:
       run: |
         if [ -f tests/requirements.txt ]; then pip install -r tests/requirements.txt; fi
         pytest
+    - name: Deploy application
+      run: |
+        ssh rszczep2@bigubu.pw.edu.pl './build_and_run.sh'

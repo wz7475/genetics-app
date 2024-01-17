@@ -6,6 +6,7 @@ from .AbstractDB import AbstractDB
 
 PATH_PREFIX = os.path.join("/code", "data")
 
+
 class RedisHandle(AbstractDB):
     def __init__(self):
         redis_host = 'redisalg'
@@ -88,7 +89,7 @@ class RedisHandle(AbstractDB):
             source = csv.DictReader(in_file, delimiter="\t", fieldnames=self.fildnames)
             first_line = "\t".join(source.fieldnames) + f"\t{alg_names}\n"
             out_file.write(first_line)
-            in_file.readline() # read headers
+            in_file.readline()  # read headers
 
             for row in source:
                 row: dict
