@@ -1,6 +1,6 @@
 from typing import List
 
-from TaskHandler import TasKHandler
+from .TaskHandler import TasKHandler
 import redis
 
 
@@ -26,13 +26,12 @@ class TaskHandlerRedis(TasKHandler):
     def check_if_field_exists(self, task_id: str, field: str) -> bool:
         return bool(self.client.hexists(task_id, field))
 
+    def get_task_all_fields(self, task_id: str) -> dict:
+        return self.client.hgetall(task_id)
+
 
 def get_task_handler_redis() -> TasKHandler:
-    redis_host = "localhost"
+    redis_host = "redisalg"
     redis_port = 6379
     client = redis.StrictRedis(host=redis_host, port=redis_port, decode_responses=True)
     return TaskHandlerRedis(client)
-
-if __name__ == "__main__":
-    th = get_task_handler_redis()
-    print(th.check_if_field_exists("a97af5e2-fa4d-428d-9b7b-97b2d6999372", "status"))
