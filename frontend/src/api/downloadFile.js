@@ -1,6 +1,6 @@
 export const downloadFile = async (taskId) => {
     let filename = ''
-    await fetch('api/getresult', {
+    await fetch('api/getResult', {
         method: 'POST',
         body: JSON.stringify({ task_id: taskId }),
     })

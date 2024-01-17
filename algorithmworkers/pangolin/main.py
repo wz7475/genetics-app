@@ -67,11 +67,9 @@ class Pangolin(Algorithm):
                     delimiter="\t",
                     fieldnames=[self.name],
                 )
-
                 dest.writeheader()
                 for row in source:
                     result = row["Pangolin"]
-
                     dest.writerow({self.name: result})
 
 

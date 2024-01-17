@@ -4,7 +4,7 @@ export const sendFile = async (event) => {
 
         const formData = new FormData()
         formData.append('file', file, file.name)
-        const result = await fetch('/api/uploadfile', {
+        const result = await fetch('/api/uploadFile', {
             method: 'POST',
             body: formData,
         }).then((res) => res.json())

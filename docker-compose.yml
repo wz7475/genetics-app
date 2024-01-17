@@ -23,7 +23,7 @@ services:
     container_name: orchestrator
     volumes:
       - ./taskflowapi/orchestrator/app:/code/app
-      - shared-volume:/code/app/data
+      - shared-volume:/code/data
       - ./taskflowapi/shared_utils:/code/app/shared_utils
     working_dir: /code/app
     command: bash -c "python3 main.py"
@@ -39,7 +39,7 @@ services:
     container_name: parser
     volumes:
       - ./taskflowapi/parser/app:/code/app
-      - shared-volume:/code/app/data
+      - shared-volume:/code/data
       - ./taskflowapi/shared_utils:/code/app/shared_utils
       - ./algorithmworkers/config.py:/code/app/available_algorithms.py
     working_dir: /code/app
@@ -77,6 +77,13 @@ services:
 
   frontend:
     build: ./frontend
+    container_name: frontend
+    ports:
+      - "8081:80"
+    networks:
+      - shared-network
+    depends_on:
+      - api
 
   # algorithms
   pangolin:
@@ -84,8 +91,8 @@ services:
       context: ./algorithmworkers/
       dockerfile: ./pangolin/Dockerfile
     volumes:
-      - ./taskflowapi/shared_utils/data:/code/data_test
       - shared-volume:/code/data
+    working_dir: /code
     depends_on:
       - api
       - rabbitmq
@@ -96,14 +103,14 @@ services:
     build: 
       context: ./algorithmworkers/
       dockerfile: ./spip/Dockerfile
+    working_dir: /code
     volumes:
-      - ./taskflowapi/shared_utils/data:/code/data_test
       - shared-volume:/code/data
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     networks:
       - shared-network
-
 
 
 networks:

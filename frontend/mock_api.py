@@ -10,13 +10,13 @@ async def root():
     return {"message": "success"}
 
 
-@app.post("/uploadfile")
+@app.post("/uploadFile")
 async def create_upload_file(file: UploadFile = File(...)):
     print(file.filename)
     return {"message": "success", "id": "test123"}
 
 
-@app.post("/getresult")
+@app.post("/getResult")
 async def get_result(task_id: str = Body()):
     print(task_id)
     return FileResponse("./README.md", filename="result.tsv")
@@ -26,4 +26,4 @@ async def get_result(task_id: str = Body()):
 async def get_status(task_id: str = Body()):
     print(task_id)
     sleep(0.5)
-    return {"status": "expired"}
+    return {"status": "expired"}  # pending/ready

@@ -13,7 +13,7 @@ class Algorithm(ABC):
 
         self.name = name
 
-        self.data_path = "data"
+        self.data_path = "/code/data"
 
         self.logger = get_logger(self.name)
 
@@ -62,8 +62,8 @@ class Algorithm(ABC):
 
             return_code = self.run()
 
-            self.logger.info(f"{self.name} DONE for {input_file_path}: {return_code}")
-
+            self.logger.info(f"{self.name} DONE for {input_file_path}, ret code: {return_code}")
+            self.logger.info(f"prepering output for file: {output_file_path}")
             self.prepare_output(output_file_path)
 
         self.tmp_dir_name = None
