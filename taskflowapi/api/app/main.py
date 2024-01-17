@@ -77,7 +77,8 @@ async def get_status(
 
     return {"status": "expired"}
 
-@app.post("/getDetialedStatus")
+
+@app.post("/getDetailedStatus")
 async def get_detailed_status(
         task_id: str = Body(default=None),
         task_handler: TasKHandler = Depends(get_task_handler_redis)
