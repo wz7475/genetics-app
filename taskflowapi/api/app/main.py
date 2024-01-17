@@ -77,6 +77,17 @@ async def get_status(
 
     return {"status": "expired"}
 
+@app.post("/getDetialedStatus")
+async def get_status(
+        task_id: str = Body(default=None),
+        task_handler: TasKHandler = Depends(get_task_handler_redis)
+) -> dict:
+    if task_handler.check_if_field_exists(str(task_id), "status"):
+        status = task_handler.get_task_all_fields(task_id)
+        return {"status": str(status)}
+
+    return {"status": "expired"}
+
 
 @app.post("/getRedisValue")
 async def get_redis_val(
