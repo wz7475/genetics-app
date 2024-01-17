@@ -14,6 +14,7 @@ def remove_other_columns(path: str):
     df = df[columns]
     df.to_csv(path, sep="\t", index=False)
 
+
 def main(task_handler: TasKHandler = get_task_handler_redis(), logger=get_logger()):
     connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq', heartbeat=0))
     channel = connection.channel()
