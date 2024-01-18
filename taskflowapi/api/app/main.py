@@ -10,6 +10,7 @@ from .utils import get_uuid4
 from shared_utils.RedisHandle import RedisHandle
 from shared_utils.TaskHandler import TasKHandler
 from shared_utils.TaskHandlerRedis import get_task_handler_redis
+from available_algorithms import ALL_ALGORITHMS
 
 app = FastAPI()
 
@@ -77,6 +78,9 @@ async def get_status(
 
     return {"status": "expired"}
 
+@app.get("/availableAlgorithms")
+async def get_available_algorithms() -> dict:
+    return {"algorithms": ALL_ALGORITHMS}
 
 @app.post("/getDetailedStatus")
 async def get_detailed_status(
