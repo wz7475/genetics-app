@@ -1,20 +1,17 @@
-export const sendFile = async (event) => {
-    if (event.target?.files?.[0]) {
-        const file = event.target?.files?.[0]
+import { useFileStore } from '@/store'
 
-        const formData = new FormData()
-        formData.append('file', file, file.name)
-        const result = await fetch('/api/uploadFile', {
-            method: 'POST',
-            body: formData,
-        }).then((res) => res.json())
+export const sendFile = async (file, selectedAlgorithms) => {
+    const fileStore = useFileStore()
 
-        const files = JSON.parse(localStorage.getItem('files') || '[]')
-        files.unshift({ name: file.name, id: result.id, date: new Date() })
-        localStorage.setItem('files', JSON.stringify(files))
+    const formData = new FormData()
+    formData.append('file', file, file.name)
+    formData.append('algorithms', selectedAlgorithms.join(','))
+    const result = await fetch('/api/uploadFile', {
+        method: 'POST',
+        body: formData,
+    }).then((res) => res.json())
 
-        event.target.value = null
+    fileStore.addFile(file.name, result.id)
 
-        return result
-    }
+    return result
 }

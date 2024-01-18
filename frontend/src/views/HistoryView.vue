@@ -1,11 +1,10 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import { sendFile } from '@/api/sendFile'
-import { getFileStatus } from '@/api/getFileStatus'
 import { downloadFile } from '@/api/downloadFile'
+import { useFileStore } from '@/store'
+import AnnotateButton from '@/components/AnnotateButton.vue'
 
-const filesReady = ref(false)
-const files = ref([])
+const fileStore = useFileStore()
 
 const colorMap = {
     ready: 'success',
@@ -13,50 +12,16 @@ const colorMap = {
     expired: 'grey',
 }
 
-const removeFile = (index) => {
-    files.value.splice(index, 1)
-
-    const fileStorage = JSON.parse(localStorage.getItem('files') || '[]')
-    fileStorage.splice(index, 1)
-    localStorage.setItem('files', JSON.stringify(fileStorage))
-}
-
-const reloadFiles = async () => {
-    const fileStorage = JSON.parse(localStorage.getItem('files') || '[]')
-    filesReady.value = false
-
-    files.value = await Promise.all(
-        fileStorage.map((file) =>
-            (async () => {
-                const status = (await getFileStatus(file.id)).status
-                return {
-                    status,
-                    time: new Date(file.date),
-                    name: file.name,
-                    id: file.id,
-                }
-            })()
-        )
-    )
-
-    filesReady.value = true
-}
-
 const polling = ref(null)
 
 onMounted(async () => {
-    await reloadFiles()
-    polling.value = setInterval(reloadFiles, 5000)
+    await fileStore.reloadFiles()
+    polling.value = setInterval(fileStore.reloadFiles, 5000)
 })
 
 onUnmounted(() => {
     clearInterval(polling.value)
 })
-
-const submit = async (event) => {
-    await sendFile(event)
-    await reloadFiles()
-}
 </script>
 
 <template>
@@ -91,34 +56,15 @@ const submit = async (event) => {
 
                 <v-spacer />
 
-                <v-btn
-                    color="primary"
-                    size="x-large"
-                    variant="flat"
-                    tag="label"
-                >
-                    <v-icon
-                        icon="mdi-dna"
-                        size="large"
-                        start
-                    />
-
-                    Annotate file
-                    <input
-                        type="file"
-                        hidden
-                        accept=".tsv"
-                        @change="submit"
-                    />
-                </v-btn>
+                <AnnotateButton />
             </div>
             <v-progress-circular
-                v-if="!filesReady"
+                v-if="!fileStore.ready"
                 indeterminate
                 class="ma-auto"
             ></v-progress-circular>
             <v-sheet
-                v-for="(file, index) in files"
+                v-for="(file, index) in fileStore.files"
                 :key="file.name"
                 elevation="8"
                 class="d-flex pa-1 px-4 align-center"

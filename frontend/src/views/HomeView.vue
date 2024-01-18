@@ -1,12 +1,10 @@
 <script setup>
-import { sendFile } from '@/api/sendFile'
 import { useRouter } from 'vue-router'
+import AnnotateButton from '@/components/AnnotateButton.vue'
 
 const router = useRouter()
 
-const submit = async (event) => {
-    await sendFile(event)
-
+const submitCallback = () => {
     router.push('/history')
 }
 </script>
@@ -29,26 +27,7 @@ const submit = async (event) => {
 
             <div class="py-10" />
 
-            <v-btn
-                color="primary"
-                size="x-large"
-                variant="flat"
-                tag="label"
-            >
-                <v-icon
-                    icon="mdi-dna"
-                    size="large"
-                    start
-                />
-
-                Annotate file
-                <input
-                    type="file"
-                    hidden
-                    accept=".tsv"
-                    @change="submit"
-                />
-            </v-btn>
+            <AnnotateButton :submitCallback="submitCallback" />
             <br />
             <v-btn
                 min-width="164"
