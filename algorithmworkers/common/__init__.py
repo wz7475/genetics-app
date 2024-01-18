@@ -62,7 +62,9 @@ class Algorithm(ABC):
 
             return_code = self.run()
 
-            self.logger.info(f"{self.name} DONE for {input_file_path}, ret code: {return_code}")
+            self.logger.info(
+                f"{self.name} DONE for {input_file_path}, ret code: {return_code}"
+            )
             self.logger.info(f"prepering output for file: {output_file_path}")
             self.prepare_output(output_file_path)
 
@@ -71,13 +73,13 @@ class Algorithm(ABC):
         self.logger.info(f"Converted file {output_file_path}")
 
     @abstractmethod
-    def run(self, tmp_dir_name):
+    def run(self):
         pass
 
     @abstractmethod
-    def prepare_input(self, input_file_path, tmp_dir_name):
+    def prepare_input(self, input_file_path):
         pass
 
     @abstractmethod
-    def prepare_output(self, output_file_path, tmp_dir_name):
+    def prepare_output(self, output_file_path):
         pass
