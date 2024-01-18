@@ -1,8 +1,7 @@
 <script setup>
 import { sendFile } from '@/api/sendFile'
 import { getAlgorithms } from '@/api/getAlgorithms'
-import { onMounted } from 'vue'
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
 const props = defineProps(['submitCallback'])
 
@@ -11,6 +10,10 @@ const fileSelected = ref(false)
 
 const algorithms = ref([])
 const selectedAlgs = ref([])
+
+const canSubmit = computed(
+    () => fileSelected.value && selectedAlgs.value.length > 0
+)
 
 const onChange = async () => {
     fileSelected.value = true
@@ -107,7 +110,7 @@ onMounted(async () => {
                     <v-btn
                         class="px-4"
                         variant="flat"
-                        color="primary"
+                        :color="canSubmit ? 'primary' : 'grey'"
                         size="x-large"
                         @click="
                             () => {
@@ -115,6 +118,7 @@ onMounted(async () => {
                                 submit()
                             }
                         "
+                        :disabled="!canSubmit"
                     >
                         Submit
                         <v-icon
