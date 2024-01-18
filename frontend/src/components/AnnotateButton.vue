@@ -25,7 +25,8 @@ const submit = async () => {
 
         await sendFile(file, selectedAlgs.value)
 
-        fileInput.value.value = null
+        if (fileInput.value) fileInput.value.value = null
+
         fileSelected.value = false
 
         if (props.submitCallback) props.submitCallback()
