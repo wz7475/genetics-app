@@ -10,6 +10,7 @@ from .utils import get_uuid4
 from shared_utils.RedisHandle import RedisHandle
 from shared_utils.TaskHandler import TasKHandler
 from shared_utils.TaskHandlerRedis import get_task_handler_redis
+from available_algorithms import ALL_ALGORITHMS
 
 app = FastAPI()
 
@@ -34,8 +35,8 @@ def shutdown_event():
 
 @app.post("/uploadFile")
 async def create_upload_file(
-        task_handler: TasKHandler = Depends(get_task_handler_redis),
-        file: UploadFile = File(...),
+    task_handler: TasKHandler = Depends(get_task_handler_redis),
+    file: UploadFile = File(...),
 ):
     unique_id = get_uuid4()
     await repo.save_file(file, f"{unique_id}.tsv")
@@ -53,8 +54,8 @@ async def create_upload_file(
 
 @app.post("/getResult")
 async def get_result(
-        task_id: str = Body(default=None),
-        task_handler: TasKHandler = Depends(get_task_handler_redis),
+    task_id: str = Body(default=None),
+    task_handler: TasKHandler = Depends(get_task_handler_redis),
 ) -> File:
     if task_handler.get_task_field(task_id, "status") == "ready":
         path = os.path.join("data", f"{task_id}_out.tsv")
@@ -68,8 +69,8 @@ async def get_result(
 
 @app.post("/getStatus")
 async def get_status(
-        task_id: str = Body(default=None),
-        task_handler: TasKHandler = Depends(get_task_handler_redis)
+    task_id: str = Body(default=None),
+    task_handler: TasKHandler = Depends(get_task_handler_redis),
 ) -> dict:
     if task_handler.check_if_field_exists(str(task_id), "status"):
         status = task_handler.get_task_field(task_id, "status")
@@ -78,10 +79,15 @@ async def get_status(
     return {"status": "expired"}
 
 
+@app.get("/availableAlgorithms")
+async def get_available_algorithms() -> dict:
+    return {"algorithms": ALL_ALGORITHMS}
+
+
 @app.post("/getDetailedStatus")
 async def get_detailed_status(
-        task_id: str = Body(default=None),
-        task_handler: TasKHandler = Depends(get_task_handler_redis)
+    task_id: str = Body(default=None),
+    task_handler: TasKHandler = Depends(get_task_handler_redis),
 ) -> dict:
     if task_handler.check_if_field_exists(str(task_id), "status"):
         status = task_handler.get_task_all_fields(task_id)
@@ -92,8 +98,7 @@ async def get_detailed_status(
 
 @app.post("/getRedisValue")
 async def get_redis_val(
-        key=Body(default=None),
-        task_handler: TasKHandler = Depends(get_task_handler_redis)
+    key=Body(default=None), task_handler: TasKHandler = Depends(get_task_handler_redis)
 ) -> dict:
     db = RedisHandle()
     return {"result": str(db.get_data(str(key)))}
