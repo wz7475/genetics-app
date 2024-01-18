@@ -1,3 +1,5 @@
+import itertools
+
 import redis
 import os
 import csv
@@ -63,7 +65,10 @@ class RedisHandle(AbstractDB):
                 open(out_filepath, 'w') as out_file:
             source = csv.DictReader(in_file, delimiter="\t", fieldnames=self.fildnames)
 
-            for row in source:
+            first_line = "\t".join(source.fieldnames) + "\n"
+            out_file.write(first_line)
+
+            for row in itertools.islice(source, 1, None):
                 row: dict
                 key = self.get_key_from_tsv(row, algorythm)
                 if not self.get_data(key):

@@ -23,18 +23,21 @@ const removeFile = (index) => {
 
 const reloadFiles = async () => {
     const fileStorage = JSON.parse(localStorage.getItem('files') || '[]')
-    files.value = []
     filesReady.value = false
 
-    for (const file of fileStorage) {
-        const status = (await getFileStatus(file.id)).status
-        files.value.push({
-            status,
-            time: new Date(file.date),
-            name: file.name,
-            id: file.id,
-        })
-    }
+    files.value = await Promise.all(
+        fileStorage.map((file) =>
+            (async () => {
+                const status = (await getFileStatus(file.id)).status
+                return {
+                    status,
+                    time: new Date(file.date),
+                    name: file.name,
+                    id: file.id,
+                }
+            })()
+        )
+    )
 
     filesReady.value = true
 }

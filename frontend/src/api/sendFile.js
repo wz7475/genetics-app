@@ -13,6 +13,8 @@ export const sendFile = async (event) => {
         files.unshift({ name: file.name, id: result.id, date: new Date() })
         localStorage.setItem('files', JSON.stringify(files))
 
+        event.target.value = null
+
         return result
     }
 }
