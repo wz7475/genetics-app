@@ -1,1 +1,1 @@
-data_path = "data"
+data_path = "/code/data"

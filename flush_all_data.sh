@@ -1,4 +1,4 @@
-docker exec api bash -c "rm -r data/*"
+docker exec api bash -c "rm -r /code/data/*"
 echo "Flushed files in shared volume"
 
 python3 -c "import redis

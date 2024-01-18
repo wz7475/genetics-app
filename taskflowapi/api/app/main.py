@@ -7,7 +7,7 @@ import pika
 from shared_utils.logger import get_logger
 from typing import List
 
-from .data.SharedVolumeRepo import SharedVolumeRepo
+from .repositories.SharedVolumeRepo import SharedVolumeRepo
 from .utils import get_uuid4
 from shared_utils.RedisHandle import RedisHandle
 from shared_utils.TaskHandler import TasKHandler
