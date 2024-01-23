@@ -25,7 +25,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install flake8 pytest
+        pip install flake8 pytest pytest-cov
         if [ -f taskflowapi/api/requirements.txt ]; then pip install -r taskflowapi/api/requirements.txt; fi
     - name: Lint with flake8
       run: |
@@ -36,7 +36,11 @@ jobs:
     - name: Test with pytest
       run: |
         if [ -f tests/requirements.txt ]; then pip install -r tests/requirements.txt; fi
-        pytest
+        pytest --cov-config=.coveragerc --cov=algorithmworkers tests/test_algorithmworkers/
+        docker-compose build tests
+        docker-compose up -d tests
+        docker exec -it tests pytest --cov-config=.coveragerc --cov=src test_api/
+        docker-compose down
     # - name: Deploy application
     #   run: |
     #     ssh rszczep2@bigubu.ii.pw.edu.pl './build_and_run.sh'
