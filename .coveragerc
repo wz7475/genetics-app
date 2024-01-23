@@ -1,0 +1,6 @@
+[run]
+omit =
+    */algorithmworkers/*.py
+    */algorithmworkers/common/*
+    */algorithmworkers/*/__init__.py
+    */algorithmworkers/*/test.py
