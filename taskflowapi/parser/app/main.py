@@ -47,11 +47,9 @@ def main(
         # get status of all algorithms
         for algorithm_name in ALL_ALGORITHMS:
             algorithm_status = task_handler.get_task_field(unique_id, algorithm_name)
-            logger.warning(f"{algorithm_name} status: {algorithm_status} task: {unique_id}")
             if algorithm_status is not None:
                 all_requested_algorithms[algorithm_name] = algorithm_status
 
-        logger.warning(all_requested_algorithms)
         # stop if any not annotated yet
         for algorithm_name in all_requested_algorithms:
             if all_requested_algorithms[algorithm_name] != "annotated":
