@@ -39,7 +39,7 @@ jobs:
         pytest --cov-config=.coveragerc --cov=algorithmworkers --cov=taskflowapi/orchestrator/app tests/test_algorithmworkers tests/test_orchestrator
         docker-compose build tests
         docker-compose up -d tests
-        docker exec tests 'pytest --cov-config=.coveragerc --cov=src test_api/'
+        docker exec tests pytest --cov-config=.coveragerc --cov=src test_api/
         docker-compose down
     # - name: Deploy application
     #   run: |
