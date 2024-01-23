@@ -40,4 +40,4 @@ jobs:
     - name: Test with pytest
       run: |
         if [ -f tests/requirements.txt ]; then pip install -r tests/requirements.txt; fi
-        pytest --cov-config=.coveragerc --cov=algorithmworkers tests/test_algorithmworkers/
+        pytest --cov-config=.coveragerc --cov=algorithmworkers --cov=taskflowapi/orchestrator/app tests/test_algorithmworkers tests/test_orchestrator
