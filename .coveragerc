@@ -4,3 +4,5 @@ omit =
     */algorithmworkers/common/*
     */algorithmworkers/*/__init__.py
     */algorithmworkers/*/test.py
+    */taskflowapi/orchestrator/app/__init__.py
+    */taskflowapi/orchestrator/app/logger.py
