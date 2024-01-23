@@ -1,18 +1,15 @@
 import os.path
 
-import pandas as pd
+
 import pika
 
 from logger import get_logger
 from shared_utils.RedisHandle import RedisHandle
 from shared_utils.TaskHandlerRedis import get_task_handler_redis, TasKHandler
+from utils import  remove_other_columns
 
 
-def remove_other_columns(path: str):
-    columns = ["Chr", "POS", "Ref", "Alt", "HGVS"]
-    df = pd.read_csv(path, sep="\t")
-    df = df[columns]
-    df.to_csv(path, sep="\t", index=False)
+
 
 
 def main(task_handler: TasKHandler = get_task_handler_redis(), logger=get_logger()):

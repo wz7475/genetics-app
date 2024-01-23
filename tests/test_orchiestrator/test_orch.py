@@ -1,4 +1,4 @@
-from taskflowapi.orchestrator.app.main import remove_other_columns
+from taskflowapi.orchestrator.app.utils import remove_other_columns
 import os
 import shutil
 PATH_TO_ORCH_DATA = os.path.join('tests', 'data', 'orch')
