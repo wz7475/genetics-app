@@ -1,3 +1,4 @@
+import requests
 # from fastapi.testclient import TestClient
 
 # from taskflowapi.api.app.main import app
@@ -25,3 +26,10 @@ def test_algorythm():
     #     response = client.get("/availableAlgorithms")
     #     assert response.status_code == 200
     #     assert response.json() == {"message": "Job enqueued"}
+
+
+# make requests to the api get - available algorithms
+def test_basic_endpoint():
+    response = requests.get("http://api:80/availableAlgorithms")
+    assert response.status_code == 200
+

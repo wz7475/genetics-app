@@ -1,0 +1,5 @@
+FROM python:3.9
+
+COPY ./test_requirements.txt /code/test_requirements.txt
+
+RUN pip install --no-cache-dir --upgrade -r /code/test_requirements.txt

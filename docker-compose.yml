@@ -75,15 +75,15 @@ services:
     networks:
       - shared-network
 
-  frontend:
-    build: ./frontend
-    container_name: frontend
-    ports:
-      - "8081:80"
-    networks:
-      - shared-network
-    depends_on:
-      - api
+#  frontend:
+#    build: ./frontend
+#    container_name: frontend
+#    ports:
+#      - "8081:80"
+#    networks:
+#      - shared-network
+#    depends_on:
+#      - api
 
   # algorithms
   pangolin:
@@ -111,6 +111,21 @@ services:
         condition: service_healthy
     networks:
       - shared-network
+
+  tests:
+    build: ./tests
+    container_name: tests
+    volumes:
+      - ./tests/test_api:/code/test_api
+      - ./config.py:/code/config.py
+    working_dir: /code
+    command: tail -f /dev/null
+    networks:
+      - shared-network
+    depends_on:
+      - api
+      - rabbitmq
+      - redis
 
 
 networks:
