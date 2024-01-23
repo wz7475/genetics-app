@@ -6,10 +6,7 @@ import pika
 from logger import get_logger
 from shared_utils.RedisHandle import RedisHandle
 from shared_utils.TaskHandlerRedis import get_task_handler_redis, TasKHandler
-from utils import  remove_other_columns
-
-
-
+from utils import remove_other_columns
 
 
 def main(task_handler: TasKHandler = get_task_handler_redis(), logger=get_logger()):

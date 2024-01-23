@@ -5,7 +5,6 @@ from taskflowapi.api.app.main import app
 testclient = TestClient(app)
 
 
-
 def test_startup():
     """
     - context manager to include on event startup and shutdown
@@ -16,8 +15,6 @@ def test_startup():
     #     assert response.status_code == 200
     #     assert response.json() == {"message": "Job enqueued"}
     assert "app" == "app"
-
-
 
 
 def test_algorythm():

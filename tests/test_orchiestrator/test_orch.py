@@ -3,9 +3,9 @@ import os
 import shutil
 PATH_TO_ORCH_DATA = os.path.join('tests', 'data', 'orch')
 
+
 def test_removing_columns():
     """
-    doesnt work - no logger package due to the way of mounting modules
     :return:
     """
     source = os.path.join(PATH_TO_ORCH_DATA, "orginal-tsv.tsv")
