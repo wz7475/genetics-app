@@ -117,8 +117,7 @@ services:
     container_name: tests
     volumes:
       - ./tests/test_api:/code/test_api
-      - ./tests/config.py:/code/config.py
-      - ./taskflowapi/api/app/main.py:/code/src/main.py
+      - ./config.py:/code/config.py
     working_dir: /code
     command: tail -f /dev/null
     networks:
