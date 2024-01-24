@@ -1,5 +1,3 @@
-from time import sleep
-
 import requests
 import pytest
 
@@ -27,7 +25,7 @@ def test_upload_file():
     assert response.status_code == 200
     response = response.json()
     assert response["message"] == "success"
-    assert type(response["id"]) == str
+    assert type(response["id"]) is str
 
 
 @pytest.mark.run(order=3)
@@ -49,15 +47,6 @@ def test_get_status_pending():
 
 
 @pytest.mark.run(order=5)
-def test_get_status_pending():
-    response = post_file()
-    task_id = response.json()["id"]
-    response = requests.post(f"{URL}/getStatus", data=f'"{task_id}"')
-    assert response.status_code == 200
-    assert response.json()["status"] == "pending"
-
-
-@pytest.mark.run(order=6)
 def test_get_detailed_status():
     response = post_file()
     task_id = response.json()["id"]
