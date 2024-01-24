@@ -5,7 +5,6 @@ from fastapi.responses import FileResponse
 import pika
 
 from shared_utils.logger import get_logger
-from typing import List
 
 from .repositories.SharedVolumeRepo import SharedVolumeRepo
 from .utils import get_uuid4
@@ -39,17 +38,17 @@ def shutdown_event():
 async def create_upload_file(
         task_handler: TasKHandler = Depends(get_task_handler_redis),
         file: UploadFile = File(...),
-        algorithms: List[str] = Body(default=["pangolin", "spip"])
+        algorithms: str = Body(default="pangolin,spip")
 ):
     unique_id = get_uuid4()
     await repo.save_file(file, f"{unique_id}.tsv")
-    task_handler.create_task(unique_id, [x for x in algorithms])  # TODO add pangolin
+    task_handler.create_task(unique_id, [alg for alg in algorithms.split(",")])
     channel.basic_publish(
         exchange="",
         routing_key="orchestrator",
         body=b"",
         properties=pika.BasicProperties(
-            headers={"unique_id": unique_id, "algorithms": ",".join(algorithms)}  # TODO add pangolin
+            headers={"unique_id": unique_id, "algorithms": algorithms}
         ),
     )
     return {"message": "success", "id": unique_id}
