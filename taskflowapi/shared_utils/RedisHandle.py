@@ -41,7 +41,7 @@ class RedisHandle(AbstractDB):
         :param task_id:
         :return:
         """
-        original_file = os.path.join(PATH_PREFIX, f"{task_id}_{alg_name}.tsv")
+        original_file = os.path.join(PATH_PREFIX, f"{task_id}.tsv")
         with open(original_file, newline='') as tsvfile, \
                 open(filepath) as out_file:
             source = csv.DictReader(tsvfile, delimiter="\t", fieldnames=self.fildnames)

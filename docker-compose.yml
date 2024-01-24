@@ -26,6 +26,7 @@ services:
       - ./taskflowapi/orchestrator/app:/code/app
       - shared-volume:/code/data
       - ./taskflowapi/shared_utils:/code/app/shared_utils
+      - ./algorithmworkers/config.py:/code/app/config.py
     working_dir: /code/app
     command: bash -c "python3 main.py"
     depends_on:

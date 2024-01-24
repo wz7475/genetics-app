@@ -1,12 +1,16 @@
 import os.path
-
+from uuid import uuid4
 
 import pika
 
 from logger import get_logger
 from shared_utils.RedisHandle import RedisHandle
 from shared_utils.TaskHandlerRedis import get_task_handler_redis, TasKHandler
-from utils import remove_other_columns
+from utils import remove_other_columns, split_file_into_batches
+from math import ceil
+from config import ALG_BATCH_SIZE
+
+PATH_PREFIX = os.path.join("/code", "data")
 
 
 def publish_message(channel, routing_key, headers):
@@ -19,9 +23,7 @@ def publish_message(channel, routing_key, headers):
 
 
 def main(task_handler: TasKHandler = get_task_handler_redis(), logger=get_logger()):
-    connection = pika.BlockingConnection(
-        pika.ConnectionParameters(host="rabbitmq", heartbeat=0)
-    )
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host="rabbitmq", heartbeat=0))
     channel = connection.channel()
     channel.queue_declare(queue="orchestrator")
     database = RedisHandle()
@@ -38,24 +40,24 @@ def main(task_handler: TasKHandler = get_task_handler_redis(), logger=get_logger
                 total_records_in_file,
             ) = database.get_filtered_input_file_for_alg(unique_id, algorithm)
             if total_records_in_file > 0:
-                headers = {
-                    "unique_id": unique_id,
-                    "alg_input_file_path": alg_input_file_path,
-                }
-                routing_key = algorithm
+                num_of_batches = ceil(total_records_in_file / ALG_BATCH_SIZE[algorithm])
+                batch_ids = [str(uuid4()) for _ in range(num_of_batches)]
+                split_file_into_batches(alg_input_file_path, PATH_PREFIX, batch_ids, unique_id)
+                for batch_id in batch_ids:
+                    headers = {
+                        "unique_id": f"{unique_id}_{batch_id}",
+                        "alg_input_file_path": os.path.join(PATH_PREFIX, f"{unique_id}_{batch_id}.tsv")
+                    }
+                    publish_message(channel, routing_key=algorithm, headers=headers)
+                    logger.info(f"Enqueued {algorithm} batch - {batch_id}")
+                # TODO update alg field with list containing task_id_batch_id's
+                # task_handler.update_task_field(unique_id, algorithm, [hdyz, hydż])
             else:
-                routing_key = "merger"
-                headers = {"unique_id": unique_id}
-            # if all cached enqueue merge attempt, else enqueue annotation
-            publish_message(channel, routing_key, headers)
-            logger.info(f"Published message to {routing_key} - {algorithm} - {unique_id}")
+                publish_message(channel, routing_key="merger", headers={"unique_id": unique_id})
+                logger.info(f"No records for {algorithm}")
 
-            task_handler.update_task_field(unique_id, algorithm, "enqueued")
-            logger.info(f"Enqueued annotating: {algorithm} - {unique_id}")
 
-    channel.basic_consume(
-        queue="orchestrator", on_message_callback=callback, auto_ack=True
-    )
+    channel.basic_consume(queue="orchestrator", on_message_callback=callback, auto_ack=True)
 
     channel.start_consuming()
 

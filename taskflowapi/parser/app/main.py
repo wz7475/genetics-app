@@ -40,6 +40,7 @@ def main(
         logger.info(f"Enqueued conditional merge for: {unique_id}")
 
     def merge_callback(ch, method, properties, body):
+        # TODO: checking if all subtasks done
         logger.info("Stated listening on merger")
         unique_id = properties.headers["unique_id"]
         all_requested_algorithms = {}
