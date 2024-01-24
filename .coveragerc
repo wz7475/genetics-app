@@ -1,8 +1,10 @@
 [run]
 omit =
     */algorithmworkers/*.py
-    */algorithmworkers/common/*
-    */algorithmworkers/*/__init__.py
+    */algorithmworkers/common/logger.py
+    */algorithmworkers/pangolin/__init__.py
+    */algorithmworkers/spip/__init__.py
+    */algorithmworkers/mock_algorithm/__init__.py
     */algorithmworkers/*/test.py
     */taskflowapi/orchestrator/app/__init__.py
     */taskflowapi/orchestrator/app/logger.py
