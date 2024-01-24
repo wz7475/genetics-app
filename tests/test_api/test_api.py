@@ -1,13 +1,19 @@
 import requests
 import pytest
+import io
 
 URL = "http://api:80"
-URL = "http://localhost:8080"
+temp_file = """
+Identifier	Sex	Chr	POS	Ref	Alt
+RG-corriell	female	chr10	104033415	T	G
+RG-corriell	female	chr10	104032447	A	C
+"""
 
 
 def post_file():
+
     url = f"{URL}/uploadFile"
-    files = {"file": open("taskflowapi/data/2rec.tsv", "rb")}
+    files = {"file": io.BytesIO(temp_file.encode("utf-8"))}
     data = {"algorithms": "pangolin,spip"}
     return requests.post(url, files=files, data=data)
 
