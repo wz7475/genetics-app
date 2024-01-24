@@ -1,4 +1,5 @@
 import itertools
+from typing import Tuple
 
 import redis
 import os
@@ -50,7 +51,7 @@ class RedisHandle(AbstractDB):
                 value = out_file.readline()
                 self.input_data(key, value[:-1])  # cut out \n
 
-    def get_filtered_input_file_for_alg(self, task_id, algorythm):
+    def get_filtered_input_file_for_alg(self, task_id, algorythm) -> Tuple[str, int]:
         """
         functions creates new filtered file for annotation specific algorythm
 
@@ -60,6 +61,7 @@ class RedisHandle(AbstractDB):
         """
         in_filepath = os.path.join(PATH_PREFIX, f"{task_id}.tsv")
         out_filepath = os.path.join(PATH_PREFIX, f"{task_id}_{algorythm}.tsv")
+        total_records_in_file = 0
 
         with open(in_filepath) as in_file, \
                 open(out_filepath, 'w') as out_file:
@@ -73,9 +75,10 @@ class RedisHandle(AbstractDB):
                 key = self.get_key_from_tsv(row, algorythm)
                 if not self.get_data(key):
                     out_file.write("\t".join(row.values()) + "\n")
+                    total_records_in_file += 1
 
         get_logger().info(f"Created new out file without annotated variants for {algorythm}, {task_id}")
-        return out_filepath
+        return out_filepath, total_records_in_file
 
     def create_out_file(self, task_id, algorithms):
         """
