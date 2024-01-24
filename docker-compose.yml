@@ -17,6 +17,7 @@ services:
         condition: service_healthy
     networks:
         - shared-network
+    restart: always
 
   orchestrator:
     build: taskflowapi/orchestrator
@@ -33,6 +34,7 @@ services:
       - redis
     networks:
       - shared-network
+    restart: always
 
   parser:
     build: taskflowapi/parser
@@ -52,6 +54,7 @@ services:
       - pangolin
     networks:
       - shared-network
+    restart: always
 
   rabbitmq:
     container_name: rabbitmq
@@ -63,6 +66,7 @@ services:
       - shared-network
     healthcheck:
       test: "exit 0"
+    restart: always
 
 
   redis:
@@ -74,6 +78,7 @@ services:
       - redis-data:/data
     networks:
       - shared-network
+    restart: always
 
 #  frontend:
 #    build: ./frontend
