@@ -64,7 +64,7 @@ def main(
 
         # if all annotated
         database.create_out_file(main_task_id, all_requested_algorithms.keys())
-        task_handler.update_task_field(main_task_id, "status", "ready")
+        task_handler.update_task_field(main_task_id, "status", "annotated")
 
     channel.basic_consume(queue="merger", on_message_callback=merge_callback, auto_ack=True)
     channel.basic_consume(queue="parser", on_message_callback=parse_callback, auto_ack=True)

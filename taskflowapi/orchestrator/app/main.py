@@ -51,6 +51,7 @@ def process_non_empty_alg_input(
     # update task status
     task_handler.create_subtask(main_task_id, algorithm, task_id_batch_ids)
     task_handler.update_task_field(main_task_id, algorithm, "processing")
+    task_handler.update_task_field(main_task_id, "status", "processing")
 
 
 def process_empty_alg_input(
