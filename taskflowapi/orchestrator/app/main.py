@@ -1,16 +1,15 @@
-import json
 import logging
 import os.path
+from math import ceil
 from uuid import uuid4
 
 import pika
 
+from config import ALG_BATCH_SIZE
 from logger import get_logger
 from shared_utils.RedisHandle import RedisHandle
 from shared_utils.TaskHandlerRedis import get_task_handler_redis, TasKHandler
 from utils import remove_other_columns, split_file_into_batches
-from math import ceil
-from config import ALG_BATCH_SIZE
 
 PATH_PREFIX = os.path.join("/code", "data")
 

@@ -27,6 +27,7 @@ def split_file_into_batches(input_file_path: str, output_dir_path: str, batch_id
                 batch_input = header + records[records_start_offset:records_end_offset]
                 batch_fp.writelines(batch_input)
 
+
 if __name__ == "__main__":
     input = "taskflowapi/data/2rec.tsv"
     output = "docs"
