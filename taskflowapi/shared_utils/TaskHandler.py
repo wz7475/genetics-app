@@ -18,7 +18,7 @@ class TasKHandler(ABC):
     def check_if_field_exists(self, task_id: str, field: str) -> bool:
         pass
 
-    def get_task_all_fields(self, task_id: str) -> dict:
+    def get_task_and_subtasks_progress(self, task_id: str) -> dict:
         pass
 
     def create_subtask(self, task_id: str, algorithm: str, batches_ids: List[str]) -> None:
