@@ -58,7 +58,8 @@ class TaskHandlerRedis(TasKHandler):
                 done = 0
                 for subtask in algorithm_substask:
                     done += 1 if algorithm_substask[subtask] == self._ready_status else 0
-                subtasks[algorithm] = f"{done}/{len(algorithm_substask)}"
+                # subtasks[algorithm] = f"{done}/{len(algorithm_substask)}"
+                subtasks[algorithm] = {"completed": done, "total": len(algorithm_substask)}
             else:
                 subtasks[algorithm] = "pending"
         return {"task": task, "subtasks": subtasks}
