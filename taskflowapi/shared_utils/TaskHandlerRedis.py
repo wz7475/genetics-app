@@ -1,3 +1,4 @@
+import json
 from typing import List
 
 from .TaskHandler import TasKHandler
@@ -7,6 +8,7 @@ import redis
 class TaskHandlerRedis(TasKHandler):
     def __init__(self, client):
         self.client = client
+        self._ready_status = "ready"
 
     def create_task(self, task_id: str, selected_algorithms: List[str]) -> None:
         content = {"status": "pending"}
@@ -29,6 +31,27 @@ class TaskHandlerRedis(TasKHandler):
     def get_task_all_fields(self, task_id: str) -> dict:
         return self.client.hgetall(task_id)
 
+    def create_subtask(self, task_id: str, algorithm: str, batches_ids: List[str]) -> None:
+        subtask_link = self._get_subtask_link(task_id, algorithm)
+        mapping = {}
+        for batch_id in batches_ids:
+            mapping[batch_id] = "pending"
+        self.client.hset(subtask_link, mapping=mapping)  # subtask object
+
+    def update_subtask_as_done(self, task_id: str, algorithm: str, batch_id: str) -> None:
+        subtask_link = self._get_subtask_link(task_id, algorithm)
+        self.client.hset(subtask_link, batch_id, self._ready_status)
+
+    def check_if_all_subtasks_for_alg_done(self, task_id: str, algorithm: str) -> bool:
+        subtask_link = self._get_subtask_link(task_id, algorithm)
+        subtask = self.client.hgetall(subtask_link)
+        for batch_id in subtask:
+            if subtask[batch_id] != self._ready_status:
+                return False
+        return True
+
+    def _get_subtask_link(self, task_id: str, algorithm: str) -> str:
+        return f"{task_id}_{algorithm}"
 
 def get_task_handler_redis() -> TasKHandler:
     redis_host = "redisalg"
