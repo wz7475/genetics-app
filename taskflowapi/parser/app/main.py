@@ -35,7 +35,7 @@ def main(
             exchange="",
             routing_key="merger",
             body=b"",
-            properties=pika.BasicProperties(headers={"unique_id": main_task_id, "algorithm": alg_name}),
+            properties=pika.BasicProperties(headers={"unique_id": main_task_id}),
         )
         logger.info(f"Enqueued conditional merge for: {main_task_id}")
 
@@ -44,7 +44,6 @@ def main(
         # TODO: checking if all subtasks done
         logger.info("Stated listening on merger")
         main_task_id = properties.headers["unique_id"]
-        alg_name = properties.headers["algorithm"]
         all_requested_algorithms = {}
 
         # get status of all algorithms
