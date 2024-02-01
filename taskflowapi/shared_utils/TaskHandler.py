@@ -29,6 +29,3 @@ class TasKHandler(ABC):
 
     def check_if_all_subtasks_for_alg_done(self, task_id: str, algorithms: str) -> bool:
         pass
-
-
-

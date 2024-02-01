@@ -1,8 +1,8 @@
-import json
 from typing import List
 
-from .TaskHandler import TasKHandler
 import redis
+
+from .TaskHandler import TasKHandler
 
 
 class TaskHandlerRedis(TasKHandler):
@@ -66,6 +66,7 @@ class TaskHandlerRedis(TasKHandler):
 
     def _get_subtask_link(self, task_id: str, algorithm: str) -> str:
         return f"{task_id}_{algorithm}"
+
 
 def get_task_handler_redis() -> TasKHandler:
     redis_host = "redisalg"
