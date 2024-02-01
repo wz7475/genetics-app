@@ -20,3 +20,15 @@ class TasKHandler(ABC):
 
     def get_task_all_fields(self, task_id: str) -> dict:
         pass
+
+    def create_subtask(self, task_id: str, algorithm: str, batches_ids: List[str]) -> None:
+        pass
+
+    def update_subtask_as_done(self, task_id: str, algorithm: str, batch_id: str) -> None:
+        pass
+
+    def check_if_all_subtasks_for_alg_done(self, task_id: str, algorithms: str) -> bool:
+        pass
+
+
+

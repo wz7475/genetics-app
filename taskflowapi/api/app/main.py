@@ -40,18 +40,22 @@ async def create_upload_file(
         file: UploadFile = File(...),
         algorithms: str = Body(default="pangolin,spip")
 ):
-    unique_id = get_uuid4()
-    await repo.save_file(file, f"{unique_id}.tsv")
-    task_handler.create_task(unique_id, [alg for alg in algorithms.split(",")])
+    main_task_id = get_uuid4()
+    await repo.save_file(file, f"{main_task_id}.tsv")
+
+    # create task to track progress
+    task_handler.create_task(main_task_id, [alg for alg in algorithms.split(",")])
+
+    # send msg - initialize annotation pipeline for input file
     channel.basic_publish(
         exchange="",
         routing_key="orchestrator",
         body=b"",
         properties=pika.BasicProperties(
-            headers={"unique_id": unique_id, "algorithms": algorithms}
+            headers={"unique_id": main_task_id, "algorithms": algorithms}
         ),
     )
-    return {"message": "success", "id": unique_id}
+    return {"message": "success", "id": main_task_id}
 
 
 @app.post("/getResult")
