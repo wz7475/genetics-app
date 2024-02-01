@@ -96,8 +96,8 @@ async def get_detailed_status(
     task_handler: TasKHandler = Depends(get_task_handler_redis),
 ) -> dict:
     if task_handler.check_if_field_exists(str(task_id), "status"):
-        status = task_handler.get_task_all_fields(task_id)
-        return {"status": str(status)}
+        status = task_handler.get_task_and_subtasks_progress(task_id)
+        return status
 
     return {"status": "expired"}
 

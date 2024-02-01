@@ -21,5 +21,5 @@ curl 'http://localhost:8080/availableAlgorithms'
 
 curl -X POST 'http://localhost:8080/getDetailedStatus' \
 -H 'Content-Type: application/json' \
--d '"efa1d62e-f049-4d19-96b6-50d246250603"'
+-d '"ddc2a919-de26-4749-9cc2-9281bcc30691"'
 

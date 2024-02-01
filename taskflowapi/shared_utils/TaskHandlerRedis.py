@@ -28,9 +28,6 @@ class TaskHandlerRedis(TasKHandler):
     def check_if_field_exists(self, task_id: str, field: str) -> bool:
         return bool(self.client.hexists(task_id, field))
 
-    def get_task_all_fields(self, task_id: str) -> dict:
-        return self.client.hgetall(task_id)
-
     def create_subtask(self, task_id: str, algorithm: str, batches_ids: List[str]) -> None:
         subtask_link = self._get_subtask_link(task_id, algorithm)
         mapping = {}
@@ -49,6 +46,22 @@ class TaskHandlerRedis(TasKHandler):
             if subtask[batch_id] != self._ready_status:
                 return False
         return True
+
+    def get_task_and_subtasks_progress(self, task_id: str) -> dict:
+        task = self.client.hgetall(task_id)
+        tasks = [key for key in task if key != "status"]
+        subtasks = {}
+        for algorithm in tasks:
+            subtask_link = self._get_subtask_link(task_id, algorithm)
+            if self.client.exists(subtask_link):
+                algorithm_substask = self.client.hgetall(subtask_link)
+                done = 0
+                for subtask in algorithm_substask:
+                    done += 1 if algorithm_substask[subtask] == self._ready_status else 0
+                subtasks[algorithm] = f"{done}/{len(algorithm_substask)}"
+            else:
+                subtasks[algorithm] = "pending"
+        return {"task": task, "subtasks": subtasks}
 
     def _get_subtask_link(self, task_id: str, algorithm: str) -> str:
         return f"{task_id}_{algorithm}"
