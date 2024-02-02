@@ -46,7 +46,7 @@ class RedisHandle(AbstractDB):
                 open(filepath) as out_file:
             source = csv.DictReader(tsvfile, delimiter="\t", fieldnames=self.fildnames)
             out_file.readline()  # read header
-            for row in source:
+            for row in itertools.islice(source, 1, None):
                 key = self.get_key_from_tsv(row, alg_name)
                 value = out_file.readline()
                 self.input_data(key, value[:-1])  # cut out \n
