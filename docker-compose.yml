@@ -81,15 +81,15 @@ services:
       - shared-network
     restart: always
 
-#  frontend:
-#    build: ./frontend
-#    container_name: frontend
-#    ports:
-#      - "8081:80"
-#    networks:
-#      - shared-network
-#    depends_on:
-#      - api
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "8081:80"
+    networks:
+      - shared-network
+    depends_on:
+      - api
 
   # algorithms
   pangolin:
