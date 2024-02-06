@@ -3,6 +3,7 @@ import os.path
 from fastapi import FastAPI, UploadFile, File, Depends, Body
 from fastapi.responses import FileResponse
 import pika
+from pydantic import BaseModel
 
 from shared_utils.logger import get_logger
 
@@ -15,6 +16,7 @@ from available_algorithms import ALL_ALGORITHMS
 
 app = FastAPI()
 
+class UploadFileBody(Base)
 
 @app.on_event("startup")
 async def startup_event():

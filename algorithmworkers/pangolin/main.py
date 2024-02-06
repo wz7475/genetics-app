@@ -40,6 +40,9 @@ class Pangolin(Algorithm):
 
             dest.writeheader()
             for row in source:
+                for column_name in ["Chr", "POS", "Ref", "Alt"]:
+                    if column_name not in row.keys():
+                        raise AttributeError(f"An input file does not have column with name: {column_name}")
                 chromosome = row["Chr"][3:]
                 position = row["POS"]
                 reference = row["Ref"]
