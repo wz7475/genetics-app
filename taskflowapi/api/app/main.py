@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from shared_utils.logger import get_logger
 
 from .repositories.SharedVolumeRepo import SharedVolumeRepo
-from .utils import get_uuid4
+from .utils import get_uuid4, validate_input_file
 from shared_utils.RedisHandle import RedisHandle
 from shared_utils.TaskHandler import TasKHandler
 from shared_utils.TaskHandlerRedis import get_task_handler_redis
@@ -16,7 +16,11 @@ from available_algorithms import ALL_ALGORITHMS
 
 app = FastAPI()
 
-class UploadFileBody(Base)
+
+class UploadFileBody(BaseModel):
+    file: UploadFile
+    algorithms: str = "pangolin,spip"
+
 
 @app.on_event("startup")
 async def startup_event():
@@ -42,8 +46,16 @@ async def create_upload_file(
         file: UploadFile = File(...),
         algorithms: str = Body(default="pangolin,spip")
 ):
+
+    try:
+        validate_input_file(file, algorithms.split(','))
+    except AttributeError as missing_column_name:
+        return {"message": "failed", "reason": f"Input file missing '{missing_column_name}' column."}
+    except ValueError as reason:
+        return {"message": "failed", "reason": reason}
+
     main_task_id = get_uuid4()
-    await repo.save_file(file, f"{main_task_id}.tsv")
+    await repo.save_file(file.seek(0), f"{main_task_id}.tsv")
 
     # create task to track progress
     task_handler.create_task(main_task_id, [alg for alg in algorithms.split(",")])
