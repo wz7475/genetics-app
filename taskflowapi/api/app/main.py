@@ -18,8 +18,11 @@ app = FastAPI()
 
 
 class UploadFileBody(BaseModel):
-    file: UploadFile
-    algorithms: str = "pangolin,spip"
+    algorithms: list[str] = ["pangolin", "spip"]
+
+
+class BodyTaskId(BaseModel):
+    task_id: str = None
 
 
 @app.on_event("startup")
@@ -42,13 +45,13 @@ def shutdown_event():
 
 @app.post("/uploadFile")
 async def create_upload_file(
+        algorithms: UploadFileBody,
         task_handler: TasKHandler = Depends(get_task_handler_redis),
-        file: UploadFile = File(...),
-        algorithms: str = Body(default="pangolin,spip")
+        file: UploadFile = File(...)
 ):
 
     try:
-        validate_input_file(file, algorithms.split(','))
+        validate_input_file(file, algorithms.algorithms)
     except AttributeError as missing_column_name:
         return {"message": "failed", "reason": f"Input file missing '{missing_column_name}' column."}
     except ValueError as reason:
@@ -58,7 +61,7 @@ async def create_upload_file(
     await repo.save_file(file.seek(0), f"{main_task_id}.tsv")
 
     # create task to track progress
-    task_handler.create_task(main_task_id, [alg for alg in algorithms.split(",")])
+    task_handler.create_task(main_task_id, algorithms.algorithms)
 
     # send msg - initialize annotation pipeline for input file
     channel.basic_publish(
@@ -66,7 +69,7 @@ async def create_upload_file(
         routing_key="orchestrator",
         body=b"",
         properties=pika.BasicProperties(
-            headers={"unique_id": main_task_id, "algorithms": algorithms}
+            headers={"unique_id": main_task_id, "algorithms": ','.join(algorithms)}
         ),
     )
     return {"message": "success", "id": main_task_id}
@@ -74,7 +77,7 @@ async def create_upload_file(
 
 @app.post("/getResult")
 async def get_result(
-    task_id: str = Body(default=None),
+    task_id: BodyTaskId,
     task_handler: TasKHandler = Depends(get_task_handler_redis),
 ) -> File:
     if task_handler.get_task_field(task_id, "status") == "ready":
@@ -89,7 +92,7 @@ async def get_result(
 
 @app.post("/getStatus")
 async def get_status(
-    task_id: str = Body(default=None),
+    task_id: BodyTaskId,
     task_handler: TasKHandler = Depends(get_task_handler_redis),
 ) -> dict:
     if task_handler.check_if_field_exists(str(task_id), "status"):
@@ -106,7 +109,7 @@ async def get_available_algorithms() -> dict:
 
 @app.post("/getDetailedStatus")
 async def get_detailed_status(
-    task_id: str = Body(default=None),
+    task_id: BodyTaskId,
     task_handler: TasKHandler = Depends(get_task_handler_redis),
 ) -> dict:
     if task_handler.check_if_field_exists(str(task_id), "status"):
