@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from shared_utils.logger import get_logger
 
 from .repositories.SharedVolumeRepo import SharedVolumeRepo
-from .utils import get_uuid4, validate_input_file
+from .utils import get_uuid4, validate_input_file, MissingColumnException
 from shared_utils.RedisHandle import RedisHandle
 from shared_utils.TaskHandler import TasKHandler
 from shared_utils.TaskHandlerRedis import get_task_handler_redis
@@ -45,20 +45,21 @@ def shutdown_event():
 
 @app.post("/uploadFile")
 async def create_upload_file(
-        algorithms: UploadFileBody,
         task_handler: TasKHandler = Depends(get_task_handler_redis),
-        file: UploadFile = File(...)
+        file: UploadFile = File(...),
+        algorithms: UploadFileBody = UploadFileBody()
 ):
 
     try:
-        validate_input_file(file, algorithms.algorithms)
-    except AttributeError as missing_column_name:
+        validate_input_file(file.file, algorithms.algorithms)
+    except MissingColumnException as missing_column_name:
         return {"message": "failed", "reason": f"Input file missing '{missing_column_name}' column."}
     except ValueError as reason:
         return {"message": "failed", "reason": reason}
 
     main_task_id = get_uuid4()
-    await repo.save_file(file.seek(0), f"{main_task_id}.tsv")
+    file.file.seek(0)
+    await repo.save_file(file, f"{main_task_id}.tsv")
 
     # create task to track progress
     task_handler.create_task(main_task_id, algorithms.algorithms)
