@@ -55,7 +55,7 @@ async def create_upload_file(
     except MissingColumnException as missing_column_name:
         return {"message": "failed", "reason": f"Input file missing '{missing_column_name}' column."}
     except ValueError as reason:
-        return {"message": "failed", "reason": reason}
+        return {"message": "failed", "reason": f"{reason}"}
 
     main_task_id = get_uuid4()
     file.file.seek(0)
