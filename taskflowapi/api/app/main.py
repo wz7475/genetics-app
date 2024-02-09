@@ -17,10 +17,6 @@ from available_algorithms import ALL_ALGORITHMS
 app = FastAPI()
 
 
-class UploadFileBody(BaseModel):
-    algorithms: list[str] = ["pangolin", "spip"]
-
-
 class BodyTaskId(BaseModel):
     task_id: str = None
 
@@ -47,11 +43,14 @@ def shutdown_event():
 async def create_upload_file(
         task_handler: TasKHandler = Depends(get_task_handler_redis),
         file: UploadFile = File(...),
-        algorithms: UploadFileBody = UploadFileBody()
+        algorithms: str = Body(default="pangolin,spip")
 ):
+    list_of_algorithms = algorithms.split(',')
+    if len(list_of_algorithms) <= 0:
+        raise ValueError("At least one algorithm has to be provided")
 
     try:
-        validate_input_file(file.file, algorithms.algorithms)
+        validate_input_file(file.file, list_of_algorithms)
     except MissingColumnException as missing_column_name:
         return {"message": "failed", "reason": f"Input file missing '{missing_column_name}' column."}
     except ValueError as reason:
@@ -62,7 +61,7 @@ async def create_upload_file(
     await repo.save_file(file, f"{main_task_id}.tsv")
 
     # create task to track progress
-    task_handler.create_task(main_task_id, algorithms.algorithms)
+    task_handler.create_task(main_task_id, list_of_algorithms)
 
     # send msg - initialize annotation pipeline for input file
     channel.basic_publish(
@@ -70,7 +69,7 @@ async def create_upload_file(
         routing_key="orchestrator",
         body=b"",
         properties=pika.BasicProperties(
-            headers={"unique_id": main_task_id, "algorithms": ','.join(algorithms)}
+            headers={"unique_id": main_task_id, "algorithms": algorithms}
         ),
     )
     return {"message": "success", "id": main_task_id}
