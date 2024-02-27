@@ -2,7 +2,7 @@ export const downloadFile = async (taskId) => {
     let filename = ''
     await fetch('api/getResult', {
         method: 'POST',
-        body: taskId,
+        body: JSON.stringify({ task_id: taskId }),
     })
         .then((res) => {
             const disposition = res.headers.get('Content-Disposition')

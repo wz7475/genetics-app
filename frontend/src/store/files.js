@@ -4,6 +4,36 @@ import { getFileStatus } from '@/api/getFileStatus'
 
 export const useFileStore = defineStore('files', () => {
     const files = ref([])
+
+    /*
+    const files = ref([
+        {
+            status: 'expired',
+            time: new Date(),
+            name: 'Mój pliczek 1',
+        },
+        {
+            status: 'ready',
+            time: new Date(),
+            name: 'Mój pliczek 1',
+        },
+        {
+            status: 'pending',
+            time: new Date(),
+            name: 'Mój pliczek 1',
+        },
+        {
+            status: 'processing',
+            subtasks: {
+                spip: { completed: 5, total: 10 },
+                pangolin: { completed: 5, total: 100 },
+            },
+            time: new Date(),
+            name: 'Mój pliczek 1',
+        },
+    ])
+    */
+
     const ready = ref(false)
 
     const reloadFiles = async () => {
@@ -13,9 +43,10 @@ export const useFileStore = defineStore('files', () => {
         files.value = await Promise.all(
             fileStorage.map((file) =>
                 (async () => {
-                    const status = (await getFileStatus(file.id)).status
+                    const { status, subtasks } = await getFileStatus(file.id)
                     return {
                         status,
+                        subtasks,
                         time: new Date(file.date),
                         name: file.name,
                         id: file.id,
