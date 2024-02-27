@@ -28,14 +28,18 @@ class TaskHandlerRedis(TasKHandler):
     def check_if_field_exists(self, task_id: str, field: str) -> bool:
         return bool(self.client.hexists(task_id, field))
 
-    def create_subtask(self, task_id: str, algorithm: str, batches_ids: List[str]) -> None:
+    def create_subtask(
+        self, task_id: str, algorithm: str, batches_ids: List[str]
+    ) -> None:
         subtask_link = self._get_subtask_link(task_id, algorithm)
         mapping = {}
         for batch_id in batches_ids:
             mapping[batch_id] = "pending"
         self.client.hset(subtask_link, mapping=mapping)  # subtask object
 
-    def update_subtask_as_done(self, task_id: str, algorithm: str, batch_id: str) -> None:
+    def update_subtask_as_done(
+        self, task_id: str, algorithm: str, batch_id: str
+    ) -> None:
         subtask_link = self._get_subtask_link(task_id, algorithm)
         self.client.hset(subtask_link, batch_id, self._ready_status)
 
@@ -57,12 +61,17 @@ class TaskHandlerRedis(TasKHandler):
                 algorithm_substask = self.client.hgetall(subtask_link)
                 done = 0
                 for subtask in algorithm_substask:
-                    done += 1 if algorithm_substask[subtask] == self._ready_status else 0
+                    done += (
+                        1 if algorithm_substask[subtask] == self._ready_status else 0
+                    )
                 # subtasks[algorithm] = f"{done}/{len(algorithm_substask)}"
-                subtasks[algorithm] = {"completed": done, "total": len(algorithm_substask)}
+                subtasks[algorithm] = {
+                    "completed": done,
+                    "total": len(algorithm_substask),
+                }
             else:
                 subtasks[algorithm] = "pending"
-        return {"task": task, "subtasks": subtasks}
+        return {"status": task, "subtasks": subtasks}
 
     def _get_subtask_link(self, task_id: str, algorithm: str) -> str:
         return f"{task_id}_{algorithm}"

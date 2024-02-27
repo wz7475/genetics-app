@@ -1,6 +1,6 @@
 export const getFileStatus = async (taskId) => {
-    return await fetch('api/getStatus', {
+    return await fetch('api/getDetailedStatus', {
         method: 'POST',
-        body: taskId,
+        body: JSON.stringify({ task_id: taskId }),
     }).then((res) => res.json())
 }
