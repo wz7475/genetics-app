@@ -3,6 +3,7 @@ export const downloadFile = async (taskId) => {
     await fetch('api/getResult', {
         method: 'POST',
         body: JSON.stringify({ task_id: taskId }),
+        headers: { 'Content-Type': 'application/json' },
     })
         .then((res) => {
             const disposition = res.headers.get('Content-Disposition')
